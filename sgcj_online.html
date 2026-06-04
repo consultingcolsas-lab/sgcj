@@ -345,19 +345,11 @@ async function sheetsGet(range){
 // ══ ESCRIBIR via Apps Script Web App ══
 async function sheetsWrite(action, payload){
   if(!APPS_SCRIPT_URL) throw new Error('NO_SCRIPT');
-  // Usamos GET con parámetro ?data= para evitar bloqueo CORS desde archivo local
   const encoded = encodeURIComponent(JSON.stringify(payload));
   const url = APPS_SCRIPT_URL + '?data=' + encoded;
-  const r = await fetch(url, {
-    method:'GET',
-    redirect:'follow'
-  });
+  const r = await fetch(url, {method:'GET',mode:'cors',redirect:'follow'});
   const txt = await r.text();
-  try{
-    return JSON.parse(txt);
-  }catch(e){
-    return {ok:true}; // Apps Script a veces retorna HTML en redirect
-  }
+  try{ return JSON.parse(txt); }catch(e){ return {ok:true}; }
 }
 
 // ══ SYNC STATUS ══
