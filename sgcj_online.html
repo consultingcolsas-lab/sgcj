@@ -347,9 +347,11 @@ async function sheetsWrite(action, payload){
   if(!APPS_SCRIPT_URL) throw new Error('NO_SCRIPT');
   const encoded = encodeURIComponent(JSON.stringify(payload));
   const url = APPS_SCRIPT_URL + '?data=' + encoded;
-  const r = await fetch(url, {method:'GET',mode:'cors',redirect:'follow'});
-  const txt = await r.text();
-  try{ return JSON.parse(txt); }catch(e){ return {ok:true}; }
+  // no-cors evita bloqueo CORS — el script se ejecuta aunque no podamos leer la respuesta
+  await fetch(url, {method:'GET', mode:'no-cors'});
+  // Esperar 2 segundos para que el script termine de escribir
+  await new Promise(r=>setTimeout(r,2000));
+  return {ok:true};
 }
 
 // ══ SYNC STATUS ══
