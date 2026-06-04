@@ -323,7 +323,7 @@ const SHEET_ID = '1byF0Z1M76buJioN6MYF7es3dB6zb22pqJZzb1M8WjMo';
 const API_KEY  = 'AIzaSyDoxwM9giFQQ1fRKGdiNiwxjhp6OWpdYyU';
 const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
 // URL del Apps Script Web App — se configura una sola vez (ver instrucciones al abrir)
-let APPS_SCRIPT_URL = localStorage.getItem('sgcj_apps_script_url') || 'https://script.google.com/macros/s/AKfycbyGD-ZqfJWc7b_wP3bHEhgRvGXrVUVVZinUFPWv0VWu49Nw0hhPPpWViADfiz11i20-ng/exec';
+let APPS_SCRIPT_URL = localStorage.getItem('sgcj_apps_script_url') || 'https://script.google.com/macros/s/AKfycbw5gXGAux-DyBZuYY8MUvUvdpJXsHU8cnk9sQApg8Ju6z8iFWEs7bfx_crJso_l-uPF5w/exec';
 
 // ══ CABECERAS DE CADA HOJA ══
 const HEADERS = {
@@ -345,13 +345,30 @@ async function sheetsGet(range){
 // ══ ESCRIBIR via Apps Script Web App ══
 async function sheetsWrite(action, payload){
   if(!APPS_SCRIPT_URL) throw new Error('NO_SCRIPT');
-  const encoded = encodeURIComponent(JSON.stringify(payload));
-  const url = APPS_SCRIPT_URL + '?data=' + encoded;
-  // no-cors evita bloqueo CORS — el script se ejecuta aunque no podamos leer la respuesta
-  await fetch(url, {method:'GET', mode:'no-cors'});
-  // Esperar 2 segundos para que el script termine de escribir
-  await new Promise(r=>setTimeout(r,2000));
-  return {ok:true};
+  return new Promise((resolve)=>{
+    const encoded = encodeURIComponent(JSON.stringify(payload));
+    const url = APPS_SCRIPT_URL + '?data=' + encoded;
+    // Usar iframe oculto para evitar bloqueo CORS
+    const iframe = document.createElement('iframe');
+    iframe.style.display='none';
+    iframe.src = url;
+    iframe.onload = ()=>{
+      setTimeout(()=>{
+        document.body.removeChild(iframe);
+        resolve({ok:true});
+      },1500);
+    };
+    iframe.onerror = ()=>{
+      document.body.removeChild(iframe);
+      resolve({ok:true}); // igual intentar
+    };
+    document.body.appendChild(iframe);
+    // Timeout de seguridad
+    setTimeout(()=>{
+      try{document.body.removeChild(iframe);}catch(e){}
+      resolve({ok:true});
+    },5000);
+  });
 }
 
 // ══ SYNC STATUS ══
