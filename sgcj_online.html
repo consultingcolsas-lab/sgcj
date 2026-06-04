@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SGCJ · Derecho Aduanero</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+:root{
+  --sb:240px;
+  --bg:#fff;--bg2:#f7f6f3;--bg3:#efede9;--bg4:#e9e8e4;
+  --text:#37352f;--text2:#6b6969;--text3:#9b9a97;
+  --border:#e9e8e4;
+  --blue:#2383e2;--blue-l:#e8f3fc;
+  --red:#eb5757;--red-l:#fbe8e8;
+  --green:#0f7b6c;--green-l:#e3f5f3;
+  --amber:#dfab01;--amber-l:#fef3c7;
+  --gray-t:#e3e2df;--gray-tx:#787774;
+  --r:4px;--rm:6px;--rl:8px;
+  --font:'Segoe UI',-apple-system,BlinkMacSystemFont,'Inter',sans-serif;
+}
+body{font-family:var(--font);font-size:14px;background:var(--bg);color:var(--text);height:100vh;display:flex;overflow:hidden}
+#sidebar{width:var(--sb);min-width:var(--sb);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:width .2s,min-width .2s}
+#sidebar.collapsed{width:0;min-width:0}
+.sb-top{padding:14px 14px 10px;display:flex;flex-direction:column;gap:0;border-bottom:1px solid #d8d6d0}
+.sb-top-row{display:flex;align-items:center;justify-content:space-between}
+.ws-logo{display:flex;flex-direction:column;gap:1px}
+.ws-monogram{font-family:'Georgia','Times New Roman',serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#37352f;text-transform:uppercase}
+.ws-firm{font-family:'Georgia','Times New Roman',serif;font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:.5px;line-height:1.2}
+.ws-firm span{font-weight:400;font-style:italic;color:#555;font-size:13px}
+.ws-tag{font-family:'Segoe UI',sans-serif;font-size:10px;color:#9b9a97;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;border-top:0.5px solid #d8d6d0;padding-top:4px}
+.sb-btn{width:28px;height:28px;border:none;background:none;cursor:pointer;border-radius:var(--r);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sb-btn:hover{background:var(--bg3)}
+.sb-sec{padding:4px 8px 2px;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
+.sb-item{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:var(--r);cursor:pointer;color:var(--text2);font-size:13.5px;margin:1px 4px;border:none;background:none;width:calc(100% - 8px);text-align:left;white-space:nowrap}
+.sb-item:hover{background:var(--bg3)}
+.sb-item.active{background:var(--bg3);color:var(--text)}
+.sb-item i{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.sb-badge{margin-left:auto;font-size:11px;background:var(--red-l);color:var(--red);padding:1px 6px;border-radius:10px;font-weight:600}
+.sb-badge.ok{background:var(--bg4);color:var(--text3)}
+.sb-div{height:1px;background:var(--border);margin:6px 12px}
+.sync-bar{padding:6px 12px;font-size:11px;display:flex;align-items:center;gap:6px;border-top:1px solid var(--border);margin-top:auto}
+.sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sync-dot.online{background:var(--green);animation:pulse 2s infinite}
+.sync-dot.offline{background:var(--red)}
+.sync-dot.syncing{background:var(--amber)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:8px 60px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:44px}
+.content{flex:1;overflow-y:auto;padding:20px 60px 60px}
+.page-hdr{padding:28px 60px 0}
+.page-icon{font-size:36px;display:block;margin-bottom:6px}
+.page-title{font-size:28px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:2px}
+.page-desc{font-size:14px;color:var(--text3)}
+.n-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r);font-size:13px;cursor:pointer;border:none;background:none;color:var(--text2);font-family:var(--font)}
+.n-btn:hover{background:var(--bg3)}
+.n-btn.primary{background:var(--blue);color:#fff;padding:5px 14px}
+.n-btn.primary:hover{background:#1a6fc4}
+.n-input{padding:5px 10px;border:1px solid var(--border);border-radius:var(--rm);font-size:13px;background:var(--bg);color:var(--text);font-family:var(--font);height:30px}
+.n-input:focus{outline:none;border-color:var(--blue)}
+.n-sel{padding:4px 8px;border:1px solid var(--border);border-radius:var(--rm);font-size:13px;background:var(--bg);color:var(--text);font-family:var(--font);height:30px;cursor:pointer}
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.mc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px}
+.mc .lbl{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.mc .val{font-size:24px;font-weight:700;line-height:1}
+.mc .sub{font-size:11px;color:var(--text3);margin-top:4px}
+.m-blue{color:var(--blue)}.m-red{color:var(--red)}.m-green{color:var(--green)}.m-amber{color:var(--amber)}
+.db-wrap{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--bg)}
+.db-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.db-table thead th{background:var(--bg2);padding:6px 12px;text-align:left;font-weight:500;font-size:12px;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap}
+.db-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.db-table tbody tr:last-child{border-bottom:none}
+.db-table tbody tr:hover{background:#faf9f7}
+.db-table tbody td{padding:7px 12px;vertical-align:middle}
+.row-hint{opacity:0;font-size:11px;color:var(--blue)}
+tr:hover .row-hint{opacity:1}
+.db-add{padding:6px 12px;font-size:13px;color:var(--text3);cursor:pointer;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.db-add:hover{background:var(--bg2)}
+.tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:500;white-space:nowrap}
+.t-blue{background:var(--blue-l);color:#1a6fc4}
+.t-red{background:var(--red-l);color:#c0392b}
+.t-green{background:var(--green-l);color:var(--green)}
+.t-amber{background:var(--amber-l);color:#92610b}
+.t-gray{background:var(--gray-t);color:var(--gray-tx)}
+.dc{color:var(--red);font-weight:600}.dw{color:#92610b;font-weight:600}.dok{color:var(--green)}
+.pv{max-width:740px}
+.pv-back{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text3);cursor:pointer;margin-bottom:16px;padding:3px 8px;border-radius:var(--r);border:none;background:none}
+.pv-back:hover{background:var(--bg2);color:var(--text)}
+.pr{display:flex;padding:5px 0;align-items:flex-start;border-bottom:0.5px solid var(--border)}
+.pr:last-child{border-bottom:none}
+.pr-lbl{width:180px;font-size:13px;color:var(--text3);display:flex;align-items:center;gap:6px;flex-shrink:0;padding-top:1px}
+.pr-lbl i{font-size:14px}
+.pr-val{font-size:13.5px;font-weight:500;flex:1;padding-top:1px}
+.prop-block{background:var(--bg2);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px}
+.prop-block-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.divl{height:1px;background:var(--border);margin:16px 0}
+.sh{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.tl-wrap{border-left:2px solid var(--border);margin-left:8px;padding-left:16px}
+.tl-e{position:relative;margin-bottom:14px}
+.tl-e::before{content:'';position:absolute;left:-21px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--blue);border:2px solid var(--bg)}
+.tl-date{font-size:11px;color:var(--text3);margin-bottom:2px}
+.tl-tipo{font-size:11px;font-weight:600;color:var(--blue);margin-bottom:2px}
+.tl-desc{font-size:13px;color:var(--text)}
+.al-block{border-radius:var(--rm);padding:10px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.al-block:hover{filter:brightness(.97)}
+.al-block.crit{background:var(--red-l);border-left:3px solid var(--red)}
+.al-block.warn{background:var(--amber-l);border-left:3px solid var(--amber)}
+.al-block.info{background:var(--blue-l);border-left:3px solid var(--blue)}
+.al-sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 6px;display:flex;align-items:center;gap:6px}
+.kb-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start}
+.kb-col{background:var(--bg2);border-radius:var(--rl);padding:10px;min-height:120px}
+.kb-col-hdr{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.kb-cnt{font-size:11px;background:var(--bg4);padding:1px 7px;border-radius:10px;color:var(--text3)}
+.kb-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rm);padding:10px;margin-bottom:8px;cursor:pointer}
+.kb-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+.rep-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:16px}
+.rep-block h3{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px}
+.sbar{margin-bottom:10px}
+.sbar .sh2{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;background:var(--blue)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;justify-content:center;align-items:flex-start;padding:40px 20px;overflow-y:auto}
+.overlay.show{display:flex}
+.modal{background:#f0f0ee;border-radius:var(--rl);width:100%;max-width:700px;box-shadow:0 8px 40px rgba(0,0,0,.15);margin:auto;overflow:hidden}
+.modal.sm{max-width:480px}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid #d4d3cf;display:flex;align-items:center;justify-content:space-between;background:#e4e3df}
+.modal-hdr h2{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text)}
+.modal-body{padding:20px;max-height:72vh;overflow-y:auto;background:#f0f0ee}
+.modal-footer{padding:12px 20px;border-top:1px solid #d4d3cf;display:flex;justify-content:flex-end;gap:8px;background:#e4e3df}
+.fs-lbl{font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid #d4d3cf;grid-column:1/-1}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ff{grid-column:1/-1}
+.fgrp{display:flex;flex-direction:column;gap:4px}
+.fgrp label{font-size:12px;font-weight:500;color:#444}
+.fgrp input,.fgrp select,.fgrp textarea{font-size:13px;padding:6px 10px;border:1px solid #c8c7c3;border-radius:var(--rm);background:#ffffff;color:var(--text);font-family:var(--font);width:100%;transition:border-color .15s}
+.fgrp input:focus,.fgrp select:focus,.fgrp textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(35,131,226,.15)}
+.fgrp textarea{resize:vertical;min-height:70px;line-height:1.6}
+.req{color:var(--red)}
+.callout{background:var(--blue-l);border-radius:var(--rm);padding:12px 14px;font-size:13px;color:var(--text);margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+.callout i{font-size:18px;color:var(--blue);flex-shrink:0;margin-top:1px}
+.toast{position:fixed;bottom:24px;right:24px;background:#37352f;color:#fff;padding:10px 18px;border-radius:var(--rm);font-size:13px;z-index:999;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1;transform:translateY(0)}
+.ab-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.ab-avatar{width:38px;height:38px;border-radius:50%;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue);flex-shrink:0}
+.ab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+code{background:var(--bg2);padding:2px 6px;border-radius:3px;font-size:12px;font-family:monospace}
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;gap:10px;color:var(--text3);font-size:13px}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="sb-top">
+    <div class="sb-top-row">
+      <div class="ws-logo">
+        <div class="ws-monogram">C · C · S</div>
+        <div class="ws-firm">Consulting<span>col</span></div>
+        <div class="ws-firm" style="font-size:12px;font-weight:400;font-style:normal;color:#444;letter-spacing:.3px">S. A. S.</div>
+      </div>
+      <button class="sb-btn" onclick="toggleSB()" style="align-self:flex-start"><i class="ti ti-layout-sidebar-left-collapse"></i></button>
+    </div>
+    <div class="ws-tag">Gestión · Derecho Aduanero · Colombia</div>
+  </div>
+  <div class="sb-div"></div>
+  <button class="sb-item active" id="nav-dashboard" onclick="nav('dashboard')"><i class="ti ti-home"></i> Inicio</button>
+  <div class="sb-div"></div>
+  <div class="sb-sec">Bases de datos</div>
+  <button class="sb-item" id="nav-clientes" onclick="nav('clientes')"><i class="ti ti-users"></i> Clientes</button>
+  <button class="sb-item" id="nav-casos" onclick="nav('casos')"><i class="ti ti-briefcase"></i> Casos</button>
+  <button class="sb-item" id="nav-actuaciones" onclick="nav('actuaciones')"><i class="ti ti-calendar-event"></i> Actuaciones</button>
+  <button class="sb-item" id="nav-abogados" onclick="nav('abogados')"><i class="ti ti-user-check"></i> Abogados</button>
+  <div class="sb-div"></div>
+  <div class="sb-sec">Vistas</div>
+  <button class="sb-item" id="nav-alertas" onclick="nav('alertas')"><i class="ti ti-bell-ringing"></i> Alertas <span class="sb-badge" id="sb-badge">0</span></button>
+  <button class="sb-item" id="nav-kanban" onclick="nav('kanban')"><i class="ti ti-layout-kanban"></i> Tablero</button>
+  <button class="sb-item" id="nav-reportes" onclick="nav('reportes')"><i class="ti ti-chart-bar"></i> Reportes</button>
+  <div class="sb-div"></div>
+  <div class="sb-sec">Sistema</div>
+  <button class="sb-item" onclick="syncNow()"><i class="ti ti-refresh"></i> Sincronizar ahora</button>
+  <button class="sb-item" onclick="exportDB()"><i class="ti ti-download"></i> Exportar backup</button>
+  <button class="sb-item" onclick="document.getElementById('imp').click()"><i class="ti ti-upload"></i> Importar datos</button>
+  <input type="file" id="imp" accept=".json" style="display:none" onchange="importDB(event)">
+  <div class="sync-bar">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-status" style="color:var(--text3)">Conectando...</span>
+  </div>
+</div>
+
+<button id="sb-float" onclick="toggleSB()" style="display:none;position:fixed;top:10px;left:10px;z-index:100;background:var(--bg2);border:1px solid var(--border);border-radius:var(--rm);padding:5px 8px;cursor:pointer;font-size:16px;color:var(--text2)"><i class="ti ti-layout-sidebar"></i></button>
+
+<div id="main">
+  <div id="page-hdr" class="page-hdr"></div>
+  <div id="topbar" class="topbar"></div>
+  <div id="content" class="content"></div>
+</div>
+
+<!-- MODALES (igual que versión anterior) -->
+<!-- MODAL CLIENTE -->
+<div class="overlay" id="m-cliente">
+<div class="modal">
+  <div class="modal-hdr"><h2><i class="ti ti-user-plus" style="color:var(--blue)"></i><span id="mc-t">Nuevo cliente</span></h2><button class="n-btn" onclick="cm('m-cliente')"><i class="ti ti-x"></i></button></div>
+  <div class="modal-body"><div class="fg">
+    <div class="fs-lbl">Información principal</div>
+    <div class="fgrp ff"><label>Razón social / Nombre <span class="req">*</span></label><input id="c-nombre" placeholder="Empresa S.A.S."></div>
+    <div class="fgrp"><label>NIT / Cédula <span class="req">*</span></label><input id="c-nit" placeholder="900.123.456-7"></div>
+    <div class="fgrp"><label>Representante legal</label><input id="c-rep"></div>
+    <div class="fgrp"><label>Teléfono</label><input id="c-tel"></div>
+    <div class="fgrp"><label>Correo electrónico</label><input id="c-email" type="email"></div>
+    <div class="fgrp"><label>Ciudad</label><input id="c-ciudad"></div>
+    <div class="fgrp"><label>Dirección</label><input id="c-dir"></div>
+    <div class="fgrp"><label>MUISCA / RUT</label><input id="c-muisca"></div>
+    <div class="fs-lbl">Clasificación</div>
+    <div class="fgrp"><label>Tipo de operador</label>
+      <select id="c-tipo"><option>Importador</option><option>Exportador</option><option>Importador/Exportador</option><option>Agente de Aduana</option><option>OEA</option><option>Otro</option></select>
+    </div>
+    <div class="fgrp"><label>Estado</label><select id="c-estado"><option>Activo</option><option>Inactivo</option></select></div>
+    <div class="fgrp ff"><label>Observaciones</label><textarea id="c-obs"></textarea></div>
+  </div></div>
+  <div class="modal-footer">
+    <button class="n-btn" onclick="cm('m-cliente')">Cancelar</button>
+    <button class="n-btn primary" onclick="saveCliente()"><i class="ti ti-check"></i> Guardar</button>
+  </div>
+</div></div>
+
+<!-- MODAL CASO -->
+<div class="overlay" id="m-caso">
+<div class="modal">
+  <div class="modal-hdr"><h2><i class="ti ti-briefcase" style="color:var(--blue)"></i><span id="mcs-t">Nuevo caso</span></h2><button class="n-btn" onclick="cm('m-caso')"><i class="ti ti-x"></i></button></div>
+  <div class="modal-body"><div class="fg">
+    <div class="fs-lbl">Identificación</div>
+    <div class="fgrp"><label>Cliente <span class="req">*</span></label><select id="caso-cliente"></select></div>
+    <div class="fgrp"><label>Abogado responsable</label><select id="caso-abogado"></select></div>
+    <div class="fgrp"><label>Tipo de proceso <span class="req">*</span></label>
+      <select id="caso-tipo"><option>Valoración aduanera</option><option>Clasificación arancelaria</option><option>Régimen sancionatorio</option><option>Recurso de reconsideración</option><option>Recurso de apelación</option><option>Importación ordinaria</option><option>Exportación</option><option>OEA - Habilitación</option><option>Requerimiento ordinario</option><option>Levante condicionado</option><option>Aprehensión de mercancía</option><option>Decomiso</option><option>Otro</option></select>
+    </div>
+    <div class="fgrp"><label>Estado</label>
+      <select id="caso-estado"><option>Activo</option><option>Urgente</option><option>En revisión</option><option>Cerrado</option></select>
+    </div>
+    <div class="fs-lbl">Acto administrativo que origina</div>
+    <div class="fgrp"><label>Tipo de acto</label>
+      <select id="caso-acto-tipo"><option value="">— Seleccionar —</option><option>Requerimiento ordinario</option><option>Requerimiento especial</option><option>Resolución sanción</option><option>Resolución de decomiso</option><option>Resolución de aprehensión</option><option>Liquidación oficial</option><option>Pliego de cargos</option><option>Auto de apertura</option><option>Oficio DIAN</option><option>Otro acto</option></select>
+    </div>
+    <div class="fgrp"><label>Número del acto / Requerimiento</label><input id="caso-acto-num" placeholder="322016-005-2025-00123"></div>
+    <div class="fgrp"><label>Fecha del acto</label><input type="date" id="caso-acto-fecha"></div>
+    <div class="fgrp"><label>Fecha de notificación <span class="req">*</span></label><input type="date" id="caso-notif-fecha"></div>
+    <div class="fgrp"><label>Nombre del importador (en el acto)</label><input id="caso-imp-nombre" placeholder="Razón social tal como aparece en el acto"></div>
+    <div class="fgrp"><label>NIT del importador (en el acto)</label><input id="caso-imp-nit" placeholder="900.123.456-7"></div>
+    <div class="fgrp"><label>Radicado DIAN</label><input id="caso-radicado" placeholder="2025-DI-00000"></div>
+    <div class="fgrp"><label>División / Seccional DIAN</label><input id="caso-division"></div>
+    <div class="fs-lbl">Resolución de respuesta</div>
+    <div class="fgrp"><label>Número de resolución</label><input id="caso-res-num"></div>
+    <div class="fgrp"><label>Fecha de resolución</label><input type="date" id="caso-res-fecha"></div>
+    <div class="fgrp ff"><label>Resultado</label><input id="caso-res-desc"></div>
+    <div class="fs-lbl">Fechas y plazos</div>
+    <div class="fgrp"><label>Fecha apertura</label><input type="date" id="caso-apertura"></div>
+    <div class="fgrp"><label>Fecha límite <span class="req">*</span></label><input type="date" id="caso-limite"></div>
+    <div class="fgrp"><label>Plazo legal</label>
+      <select id="caso-plazo"><option value="">— Seleccionar —</option><option>10 días hábiles (Art. 589)</option><option>15 días hábiles (Art. 734)</option><option>30 días hábiles (Apelación)</option><option>5 días hábiles (Art. 275)</option><option>2 meses (Consulta clasificación)</option><option>Otro plazo</option></select>
+    </div>
+    <div class="fgrp"><label>Próxima actuación</label><input id="caso-proxima"></div>
+    <div class="fs-lbl">Hechos y estrategia</div>
+    <div class="fgrp ff"><label>Descripción / Hechos</label><textarea id="caso-desc"></textarea></div>
+    <div class="fgrp ff"><label>Estrategia jurídica</label><textarea id="caso-estrategia"></textarea></div>
+  </div></div>
+  <div class="modal-footer">
+    <button class="n-btn" onclick="cm('m-caso')">Cancelar</button>
+    <button class="n-btn primary" onclick="saveCaso()"><i class="ti ti-check"></i> Guardar caso</button>
+  </div>
+</div></div>
+
+<!-- MODAL ACTUACION -->
+<div class="overlay" id="m-act">
+<div class="modal sm">
+  <div class="modal-hdr"><h2><i class="ti ti-calendar-plus" style="color:var(--blue)"></i><span id="mact-t">Registrar actuación</span></h2><button class="n-btn" onclick="cm('m-act')"><i class="ti ti-x"></i></button></div>
+  <div class="modal-body"><div class="fg">
+    <div class="fgrp"><label>Caso <span class="req">*</span></label><select id="act-caso"></select></div>
+    <div class="fgrp"><label>Fecha <span class="req">*</span></label><input type="date" id="act-fecha"></div>
+    <div class="fgrp"><label>Tipo de actuación</label>
+      <select id="act-tipo"><option>Presentación de documento</option><option>Audiencia DIAN</option><option>Respuesta a requerimiento</option><option>Interposición de recurso</option><option>Notificación recibida</option><option>Fallo / Resolución</option><option>Comunicación interna</option><option>Otro</option></select>
+    </div>
+    <div class="fgrp"><label>Responsable</label><select id="act-resp"></select></div>
+    <div class="fgrp ff"><label>Descripción <span class="req">*</span></label><textarea id="act-desc"></textarea></div>
+    <div class="fgrp ff"><label>N° Documento generado</label><input id="act-numdoc"></div>
+    <div class="fgrp ff"><label>Próxima actuación</label><input id="act-proxima"></div>
+  </div></div>
+  <div class="modal-footer">
+    <button class="n-btn" onclick="cm('m-act')">Cancelar</button>
+    <button class="n-btn primary" onclick="saveAct()"><i class="ti ti-check"></i> Guardar</button>
+  </div>
+</div></div>
+
+<!-- MODAL ABOGADO -->
+<div class="overlay" id="m-abogado">
+<div class="modal sm">
+  <div class="modal-hdr"><h2><i class="ti ti-user-check" style="color:var(--blue)"></i><span id="mab-t">Nuevo abogado</span></h2><button class="n-btn" onclick="cm('m-abogado')"><i class="ti ti-x"></i></button></div>
+  <div class="modal-body"><div class="fg">
+    <div class="fgrp ff"><label>Nombre completo <span class="req">*</span></label><input id="ab-nombre"></div>
+    <div class="fgrp"><label>Cargo</label>
+      <select id="ab-cargo"><option>Abogado principal</option><option>Abogado junior</option><option>Asistente jurídico</option><option>Pasante</option><option>Consultor externo</option></select>
+    </div>
+    <div class="fgrp"><label>Especialidad</label><input id="ab-esp"></div>
+    <div class="fgrp"><label>Correo</label><input id="ab-email" type="email"></div>
+    <div class="fgrp"><label>Teléfono</label><input id="ab-tel"></div>
+    <div class="fgrp"><label>Estado</label><select id="ab-estado"><option>Activo</option><option>Inactivo</option></select></div>
+    <div class="fgrp ff"><label>Observaciones</label><textarea id="ab-obs"></textarea></div>
+  </div></div>
+  <div class="modal-footer">
+    <button class="n-btn" onclick="cm('m-abogado')">Cancelar</button>
+    <button class="n-btn primary" onclick="saveAbogado()"><i class="ti ti-check"></i> Guardar</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+
+<script>
+// ══ CONFIGURACIÓN GOOGLE SHEETS ══
+// ══ CONFIGURACIÓN ══
+const SHEET_ID = '1byF0Z1M76buJioN6MYF7es3dB6zb22pqJZzb1M8WjMo';
+const API_KEY  = 'AIzaSyDoxwM9giFQQ1fRKGdiNiwxjhp6OWpdYyU';
+const BASE_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values`;
+// URL del Apps Script Web App — se configura una sola vez (ver instrucciones al abrir)
+let APPS_SCRIPT_URL = localStorage.getItem('sgcj_apps_script_url') || 'https://script.google.com/macros/s/AKfycbyGD-ZqfJWc7b_wP3bHEhgRvGXrVUVVZinUFPWv0VWu49Nw0hhPPpWViADfiz11i20-ng/exec';
+
+// ══ CABECERAS DE CADA HOJA ══
+const HEADERS = {
+  clientes:    ['id','nombre','nit','rep','tel','email','ciudad','dir','muisca','tipo','estado','obs'],
+  casos:       ['id','clienteId','tipo','abogado','radicado','actoTipo','actoNum','actoFecha','notifFecha','impNombre','impNit','division','resNum','resFecha','resDesc','plazo','proximaAct','fechaApertura','fechaLimite','estado','desc','estrategia'],
+  actuaciones: ['id','casoId','fecha','tipo','resp','desc','numDoc','proxima'],
+  abogados:    ['id','nombre','cargo','esp','email','tel','estado','obs']
+};
+
+// ══ LEER desde Sheets (API Key — solo lectura, siempre funciona) ══
+async function sheetsGet(range){
+  const url=`${BASE_URL}/${range}?key=${API_KEY}`;
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('Error leyendo Sheets: '+r.status);
+  const d=await r.json();
+  return d.values||[];
+}
+
+// ══ ESCRIBIR via Apps Script Web App ══
+async function sheetsWrite(action, payload){
+  if(!APPS_SCRIPT_URL) throw new Error('NO_SCRIPT');
+  // Usamos GET con parámetro ?data= para evitar bloqueo CORS desde archivo local
+  const encoded = encodeURIComponent(JSON.stringify(payload));
+  const url = APPS_SCRIPT_URL + '?data=' + encoded;
+  const r = await fetch(url, {
+    method:'GET',
+    redirect:'follow'
+  });
+  const txt = await r.text();
+  try{
+    return JSON.parse(txt);
+  }catch(e){
+    return {ok:true}; // Apps Script a veces retorna HTML en redirect
+  }
+}
+
+// ══ SYNC STATUS ══
+function setSyncStatus(state, msg){
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-status');
+  if(dot) dot.className='sync-dot '+state;
+  if(txt) txt.textContent=msg;
+}
+
+// ══ LEER TODA LA BD DESDE SHEETS ══
+async function pullFromSheets(){
+  setSyncStatus('syncing','Sincronizando...');
+  try{
+    for(const [key, sheet] of Object.entries(SHEETS)){
+      const rows = await sheetsGet(`${sheet}!A:ZZ`);
+      if(rows.length<=1){ continue; }
+      const headers=HEADERS[key];
+      db[key]=rows.slice(1).filter(r=>r[0]).map(r=>{
+        const obj={};
+        headers.forEach((h,i)=>{ obj[h]=r[i]||''; });
+        return obj;
+      });
+    }
+    saveLocal();
+    lastSync=new Date();
+    setSyncStatus('online','Sincronizado · '+lastSync.toLocaleTimeString('es-CO'));
+    badge();
+    return true;
+  }catch(e){
+    setSyncStatus('offline','Sin conexión');
+    return false;
+  }
+}
+
+// ══ ESCRIBIR COLECCIÓN COMPLETA EN SHEETS ══
+async function pushCollection(key){
+  const sheet=SHEETS[key];
+  const headers=HEADERS[key];
+  const rows=db[key].map(obj=>headers.map(h=>obj[h]||''));
+  await sheetsWrite('setSheet',{sheet, headers, rows});
+}
+
+async function pushToSheets(key){
+  if(!APPS_SCRIPT_URL){
+    setSyncStatus('offline','Sin Apps Script — solo local');
+    return false;
+  }
+  setSyncStatus('syncing','Guardando en la nube...');
+  try{
+    await pushCollection(key);
+    lastSync=new Date();
+    setSyncStatus('online','Guardado · '+lastSync.toLocaleTimeString('es-CO'));
+    // Verificar releyendo la hoja después de 2 segundos
+    setTimeout(async()=>{
+      await pullFromSheets();
+    },2000);
+    return true;
+  }catch(e){
+    setSyncStatus('offline','Error: '+e.message);
+    toast('Error al guardar: '+e.message,true);
+    return false;
+  }
+}
+
+async function syncNow(){
+  if(syncing) return;
+  syncing=true;
+  await pullFromSheets();
+  const v=document.querySelector('.sb-item.active')?.id?.replace('nav-','')||'dashboard';
+  nav(v);
+  syncing=false;
+}
+
+setInterval(async()=>{
+  if(!syncing){
+    syncing=true;
+    const ok=await pullFromSheets();
+    if(ok){
+      const v=document.querySelector('.sb-item.active')?.id?.replace('nav-','');
+      if(v) nav(v);
+    }
+    syncing=false;
+  }
+},60000);
+
+async function initSheets(){
+  // Guardar URL en localStorage si no está
+  if(APPS_SCRIPT_URL && !localStorage.getItem('sgcj_apps_script_url')){
+    localStorage.setItem('sgcj_apps_script_url', APPS_SCRIPT_URL);
+  }
+  setSyncStatus('syncing','Conectando...');
+  await pullFromSheets();
+}
+
+function mostrarConfigScript(){
+  // Solo mostrar si no está configurado
+  if(APPS_SCRIPT_URL) return;
+  const d=document.createElement('div');
+  d.id='config-banner';
+  d.style.cssText='position:fixed;top:0;left:0;right:0;background:#1a1a2e;color:#fff;z-index:500;padding:14px 20px;font-size:13px;display:flex;align-items:center;gap:12px;font-family:Georgia,serif';
+  d.innerHTML=`
+    <i class="ti ti-settings" style="font-size:18px;color:#c8b98a;flex-shrink:0"></i>
+    <div style="flex:1">
+      <b style="color:#c8b98a">Configuración requerida para sincronización en tiempo real.</b>
+      Debes crear un Apps Script en Google Sheets. 
+      <a href="#" onclick="mostrarGuiaScript()" style="color:#7ec8e3;text-decoration:underline">Ver instrucciones paso a paso</a>
+    </div>
+    <button onclick="pedirURLScript()" style="background:#c8b98a;color:#1a1a2e;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-weight:600;font-size:12px">Ingresar URL</button>
+    <button onclick="document.getElementById('config-banner').remove()" style="background:none;border:none;color:#888;font-size:18px;cursor:pointer">×</button>`;
+  document.body.appendChild(d);
+}
+
+function pedirURLScript(){
+  const url=prompt('Pega aquí la URL de tu Apps Script Web App:\n(Ejemplo: https://script.google.com/macros/s/XXXX/exec)');
+  if(url&&url.startsWith('https://script.google.com')){
+    APPS_SCRIPT_URL=url.trim();
+    localStorage.setItem('sgcj_apps_script_url',APPS_SCRIPT_URL);
+    const b=document.getElementById('config-banner');
+    if(b) b.remove();
+    toast('URL configurada. Sincronizando...');
+    initSheets().then(()=>nav('dashboard'));
+  } else if(url) {
+    alert('URL inválida. Debe empezar con https://script.google.com');
+  }
+}
+
+function mostrarGuiaScript(){
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px';
+  d.innerHTML=`<div style="background:#fff;border-radius:8px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;font-family:Georgia,serif">
+    <div style="padding:20px 24px;border-bottom:1px solid #e9e8e4;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:16px;font-weight:700;color:#1a1a2e">Configurar Apps Script — 5 minutos</h2>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#888">×</button>
+    </div>
+    <div style="padding:20px 24px;font-size:13px;line-height:1.8;color:#37352f">
+      <p style="background:#fef3c7;border-left:3px solid #dfab01;padding:10px 14px;border-radius:4px;margin-bottom:16px;font-style:italic">Solo debes hacer esto <b>una vez</b>. Después la sincronización es completamente automática.</p>
+      
+      <b style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888">Paso 1</b>
+      <p>Abre tu Google Sheets <b>SGCJ_BaseDatos</b> con la cuenta <b>consultingcolsas@gmail.com</b></p>
+      
+      <b style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888">Paso 2</b>
+      <p>En el menú superior ve a <b>Extensiones → Apps Script</b></p>
+      
+      <b style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888">Paso 3</b>
+      <p>Borra todo el código que aparece y pega exactamente esto:</p>
+      <div style="background:#1a1a2e;color:#7ec8e3;padding:14px;border-radius:6px;font-family:monospace;font-size:11px;white-space:pre-wrap;margin:8px 0">function doPost(e){
+  try{
+    var p=JSON.parse(e.postData.contents);
+    var ss=SpreadsheetApp.openById('1byF0Z1M76buJioN6MYF7es3dB6zb22pqJZzb1M8WjMo');
+    var sh=ss.getSheetByName(p.sheet);
+    if(!sh) sh=ss.insertSheet(p.sheet);
+    sh.clearContents();
+    if(p.headers) sh.appendRow(p.headers);
+    if(p.rows && p.rows.length>0){
+      var range=sh.getRange(sh.getLastRow()+1,1,p.rows.length,p.rows[0].length);
+      range.setValues(p.rows);
+    }
+    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doGet(e){
+  return ContentService.createTextOutput(JSON.stringify({ok:true,msg:'SGCJ Apps Script activo'})).setMimeType(ContentService.MimeType.JSON);
+}</div>
+      
+      <b style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888">Paso 4</b>
+      <p>Haz clic en <b>Guardar</b> (ícono de disquete) y ponle el nombre <b>SGCJ-Sync</b></p>
+      
+      <b style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888">Paso 5</b>
+      <p>Haz clic en <b>Implementar → Nueva implementación</b></p>
+      <p>Tipo: <b>Aplicación web</b> · Ejecutar como: <b>Yo</b> · Acceso: <b>Cualquier persona</b></p>
+      <p>Clic en <b>Implementar</b> → autoriza los permisos → copia la <b>URL de la aplicación web</b></p>
+      
+      <b style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#888">Paso 6</b>
+      <p>Vuelve aquí y haz clic en <b>"Ingresar URL"</b> para pegar esa URL.</p>
+      
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px">
+        <button onclick="this.closest('div[style*=fixed]').remove()" style="padding:8px 16px;border:1px solid #e9e8e4;border-radius:4px;background:none;cursor:pointer;font-size:13px">Cerrar</button>
+        <button onclick="this.closest('div[style*=fixed]').remove();pedirURLScript()" style="padding:8px 16px;background:#1a1a2e;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px;font-family:Georgia,serif">Ya tengo la URL →</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(d);
+}
+
+// ══ HOJAS ══
+const SHEETS = {
+  clientes:   'Clientes',
+  casos:      'Casos',
+  actuaciones:'Actuaciones',
+  abogados:   'Abogados'
+};
+
+// ══ DB LOCAL (caché) ══
+const LOCAL_KEY = 'sgcj_online_v1';
+let db = JSON.parse(localStorage.getItem(LOCAL_KEY) || 'null') || {
+  clientes:[], casos:[], actuaciones:[],
+  abogados:[
+    {id:'1',nombre:'Dr. García',cargo:'Abogado principal',esp:'Valoración aduanera',email:'',tel:'',estado:'Activo',obs:''},
+    {id:'2',nombre:'Dra. Martínez',cargo:'Abogado principal',esp:'Clasificación arancelaria',email:'',tel:'',estado:'Activo',obs:''},
+    {id:'3',nombre:'Dr. López',cargo:'Abogado junior',esp:'Régimen sancionatorio',email:'',tel:'',estado:'Activo',obs:''}
+  ]
+};
+let syncing = false;
+let lastSync = null;
+
+// ══ HELPERS ══
+const today = () => new Date().toISOString().split('T')[0];
+const fd = d => { if(!d) return '—'; const[y,m,dd]=d.split('-'); return `${dd}/${m}/${y}`; };
+const dr = f => { if(!f) return 999; const h=new Date(); h.setHours(0,0,0,0); const l=new Date(f); l.setHours(0,0,0,0); return Math.ceil((l-h)/864e5); };
+const dcls = d => d<=3?'dc':d<=7?'dw':'dok';
+const cop = v => { if(!v||v==0) return '—'; return '$'+Number(v).toLocaleString('es-CO'); };
+const gcl = id => db.clientes.find(c=>c.id==id) || {nombre:'—'};
+const stag = e => ({Urgente:'t-red',Activo:'t-blue','En revisión':'t-amber',Cerrado:'t-gray'}[e]||'t-gray');
+const sico = e => ({Urgente:'ti-alert-circle',Activo:'ti-progress',Cerrado:'ti-circle-check','En revisión':'ti-clock'}[e]||'ti-circle');
+const uid  = () => Date.now().toString(36) + Math.random().toString(36).substr(2,5);
+
+function saveLocal(){ localStorage.setItem(LOCAL_KEY, JSON.stringify(db)); badge(); }
+function toast(m,err=false){ const t=document.getElementById('toast'); t.style.background=err?'#c0392b':'#37352f'; document.getElementById('toast-msg').textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+
+// ══ NAV ══
+let vw='dashboard';
+function nav(v){
+  if(!v||v==='undefined') v='dashboard';
+  vw=v;
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  const el=document.getElementById('nav-'+v); if(el) el.classList.add('active');
+  const fn={dashboard:renderDash,clientes:renderClientes,casos:renderCasos,actuaciones:renderActs,abogados:renderAbogados,alertas:renderAlertas,kanban:renderKanban,reportes:renderReportes};
+  if(fn[v]) fn[v]();
+}
+function setHdr(icon,title,desc=''){document.getElementById('page-hdr').innerHTML=`<span class="page-icon">${icon}</span><div class="page-title">${title}</div>${desc?`<div class="page-desc">${desc}</div>`:''}`;}
+function setTB(h){document.getElementById('topbar').innerHTML=h;}
+function setC(h){document.getElementById('content').innerHTML=h;}
+function toggleSB(){const s=document.getElementById('sidebar');const b=document.getElementById('sb-float');s.classList.toggle('collapsed');b.style.display=s.classList.contains('collapsed')?'block':'none';}
+function badge(){const n=db.casos.filter(c=>c.estado!='Cerrado'&&dr(c.fechaLimite)<=7).length;const b=document.getElementById('sb-badge');if(b){b.textContent=n;b.className='sb-badge'+(n>0?'':' ok');}}
+function pr(icon,label,val){return`<div class="pr"><div class="pr-lbl"><i class="ti ${icon}"></i>${label}</div><div class="pr-val">${val}</div></div>`;}
+
+// ══ DASHBOARD ══
+function renderDash(){
+  setHdr('','<span style="font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:.3px;color:#1a1a2e">CONSULTINGCOL <span style="font-weight:400;font-style:italic;font-size:22px">S. A. S.</span></span>','<span style="font-family:Georgia,serif;font-style:italic;font-size:13px;color:#888;letter-spacing:.3px">Gestión de Procesos Aduaneros · Colombia · En línea</span>');setTB('');
+  const act=db.casos.filter(c=>c.estado!='Cerrado').length;
+  const urg=db.casos.filter(c=>c.estado=='Urgente'||dr(c.fechaLimite)<=3).length;
+  const cer=db.casos.filter(c=>c.estado=='Cerrado').length;
+  const prox=db.casos.filter(c=>c.estado!='Cerrado').sort((a,b)=>new Date(a.fechaLimite)-new Date(b.fechaLimite)).slice(0,7);
+  const rows=prox.map(c=>{const cl=gcl(c.clienteId);const d=dr(c.fechaLimite);
+    return`<tr onclick="abrirCaso('${c.id}')" style="cursor:pointer">
+      <td style="padding:7px 12px;font-weight:500">${cl.nombre}</td>
+      <td style="padding:7px 12px"><span class="tag t-gray" style="font-size:11px">${c.tipo}</span></td>
+      <td style="padding:7px 12px;font-size:12px">${c.actoNum||'—'}</td>
+      <td style="padding:7px 12px;font-size:12px">${fd(c.notifFecha||c.actoFecha)}</td>
+      <td style="padding:7px 12px">${fd(c.fechaLimite)}</td>
+      <td style="padding:7px 12px"><span class="${dcls(d)}">${d<=0?'VENCIDO':d+' días'}</span></td>
+      <td style="padding:7px 12px"><span class="tag ${stag(c.estado)}">${c.estado}</span></td>
+    </tr>`;}).join('');
+  setC(`
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+    <div style="height:1px;flex:1;background:linear-gradient(to right,#c8b98a,transparent)"></div>
+    <span style="font-family:Georgia,serif;font-size:11px;color:#c8b98a;letter-spacing:2px;text-transform:uppercase">Derecho Aduanero · Comercio Exterior</span>
+    <div style="height:1px;flex:1;background:linear-gradient(to left,#c8b98a,transparent)"></div>
+  </div>
+  <div class="metrics-row">
+    <div class="mc"><div class="lbl">Casos activos</div><div class="val m-blue">${act}</div><div class="sub">${db.clientes.length} clientes · ${db.abogados.filter(a=>a.estado=='Activo').length} abogados</div></div>
+    <div class="mc"><div class="lbl">Críticos / urgentes</div><div class="val m-red">${urg}</div><div class="sub">Vencen en ≤ 3 días</div></div>
+    <div class="mc"><div class="lbl">Cerrados</div><div class="val m-green">${cer}</div><div class="sub">Historial total</div></div>
+    <div class="mc"><div class="lbl">Total actuaciones</div><div class="val m-blue">${db.actuaciones.length}</div><div class="sub">Registradas en el sistema</div></div>
+  </div>
+  <div class="callout"><i class="ti ti-cloud"></i><div><b>Sistema en línea</b> — Los datos se sincronizan automáticamente con Google Sheets cada 60 segundos. Cualquier cambio de tu equipo aparece aquí al instante.</div></div>
+  <div class="db-wrap"><table class="db-table">
+    <thead><tr><th>Cliente</th><th>Proceso</th><th>N° Acto</th><th>Notificación</th><th>Límite</th><th>Días</th><th>Estado</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Sin casos activos</td></tr>'}</tbody>
+  </table></div>`);
+}
+
+// ══ CLIENTES ══
+function renderClientes(q=''){
+  setHdr('👥','Clientes','');
+  setTB(`<input class="n-input" style="width:200px" placeholder="🔍 Buscar..." oninput="renderClientes(this.value)" value="${q}"><button class="n-btn primary" onclick="omCliente()"><i class="ti ti-plus"></i> Nuevo cliente</button><span style="margin-left:auto;font-size:12px;color:var(--text3)">${db.clientes.length} registros</span>`);
+  const lista=db.clientes.filter(c=>!q||c.nombre.toLowerCase().includes(q.toLowerCase())||c.nit.includes(q));
+  const rows=lista.map(c=>{const nc=db.casos.filter(x=>x.clienteId==c.id&&x.estado!='Cerrado').length;
+    return`<tr onclick="abrirCliente('${c.id}')">
+      <td style="padding:7px 12px"><div style="display:flex;align-items:center;gap:10px">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--blue-l);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue);flex-shrink:0">${c.nombre.charAt(0)}</div>
+        <span style="font-weight:500">${c.nombre}</span><span class="row-hint">Abrir →</span>
+      </div></td>
+      <td style="padding:7px 12px;color:var(--text2)">${c.nit}</td>
+      <td style="padding:7px 12px;color:var(--text2)">${c.rep||'—'}</td>
+      <td style="padding:7px 12px">${c.ciudad||'—'}</td>
+      <td style="padding:7px 12px"><span class="tag t-blue">${c.tipo}</span></td>
+      <td style="padding:7px 12px;text-align:center"><span class="tag ${nc>0?'t-blue':'t-gray'}">${nc}</span></td>
+      <td style="padding:7px 12px"><span class="tag ${c.estado=='Activo'?'t-green':'t-gray'}">${c.estado}</span></td>
+    </tr>`;}).join('');
+  setC(`<div class="db-wrap"><table class="db-table">
+    <thead><tr><th>Nombre / Razón social</th><th>NIT</th><th>Representante</th><th>Ciudad</th><th>Tipo</th><th>Casos</th><th>Estado</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--text3)">Sin clientes</td></tr>'}</tbody>
+  </table><div class="db-add" onclick="omCliente()"><i class="ti ti-plus"></i> Nuevo cliente</div></div>`);
+}
+
+function abrirCliente(id){
+  const c=db.clientes.find(x=>x.id==id);if(!c)return;
+  const casos=db.casos.filter(x=>x.clienteId==id);
+  setHdr('','','');setTB('');
+  setC(`<div class="pv">
+    <button class="pv-back" onclick="renderClientes()"><i class="ti ti-arrow-left"></i> Clientes</button>
+    <span class="page-icon">👤</span>
+    <div class="pv-title" style="font-size:24px;font-weight:700;margin-bottom:4px">${c.nombre}</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:16px">NIT ${c.nit} · ${c.tipo}</div>
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button class="n-btn primary" onclick="omCliente('${c.id}')"><i class="ti ti-edit"></i> Editar</button>
+      <button class="n-btn" style="color:var(--red)" onclick="delCliente('${c.id}')"><i class="ti ti-trash"></i> Eliminar</button>
+    </div>
+    <div class="prop-block">
+      <div class="prop-block-title"><i class="ti ti-info-circle"></i> Datos del cliente</div>
+      ${pr('ti-id-badge','NIT',c.nit)}${pr('ti-user','Representante',c.rep||'—')}${pr('ti-phone','Teléfono',c.tel||'—')}${pr('ti-mail','Correo',c.email||'—')}${pr('ti-map-pin','Ciudad',c.ciudad||'—')}${pr('ti-tag','Tipo',`<span class="tag t-blue">${c.tipo}</span>`)}${pr('ti-circle','Estado',`<span class="tag ${c.estado=='Activo'?'t-green':'t-gray'}">${c.estado}</span>`)}
+    </div>
+    <div class="sh"><i class="ti ti-briefcase"></i> Casos (${casos.length})</div>
+    <div class="db-wrap"><table class="db-table">
+      <thead><tr><th>N° Acto</th><th>Tipo</th><th>Notificación</th><th>Límite</th><th>Estado</th></tr></thead>
+      <tbody>${casos.map(cs=>`<tr onclick="abrirCaso('${cs.id}')" style="cursor:pointer">
+        <td style="padding:6px 10px">${cs.actoNum||'—'}</td>
+        <td style="padding:6px 10px;font-weight:500">${cs.tipo}</td>
+        <td style="padding:6px 10px;font-size:12px">${fd(cs.notifFecha||cs.actoFecha)}</td>
+        <td style="padding:6px 10px">${fd(cs.fechaLimite)}</td>
+        <td style="padding:6px 10px"><span class="tag ${stag(cs.estado)}">${cs.estado}</span></td>
+      </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--text3)">Sin casos</td></tr>'}</tbody>
+    </table></div>
+  </div>`);
+}
+
+async function delCliente(id){
+  if(!confirm('¿Eliminar este cliente?'))return;
+  db.clientes=db.clientes.filter(c=>c.id!=id);
+  saveLocal();await pushToSheets('clientes');toast('Cliente eliminado');renderClientes();
+}
+
+// ══ CASOS ══
+function renderCasos(q='',fE='',fT=''){
+  setHdr('💼','Casos','');
+  setTB(`<input class="n-input" style="width:170px" placeholder="🔍 Buscar..." oninput="renderCasos(this.value,document.getElementById('fE').value,document.getElementById('fT').value)" value="${q}">
+    <select class="n-sel" id="fE" onchange="renderCasos(document.querySelector('#topbar .n-input').value,this.value,document.getElementById('fT').value)">
+      <option value="">Todos los estados</option><option ${fE=='Activo'?'selected':''}>Activo</option><option ${fE=='Urgente'?'selected':''}>Urgente</option><option ${fE=='En revisión'?'selected':''}>En revisión</option><option ${fE=='Cerrado'?'selected':''}>Cerrado</option>
+    </select>
+    <select class="n-sel" id="fT" onchange="renderCasos(document.querySelector('#topbar .n-input').value,document.getElementById('fE').value,this.value)">
+      <option value="">Todos los tipos</option><option>Valoración aduanera</option><option>Clasificación arancelaria</option><option>Régimen sancionatorio</option><option>Recurso de reconsideración</option><option>Requerimiento ordinario</option>
+    </select>
+    <button class="n-btn primary" onclick="omCaso()"><i class="ti ti-plus"></i> Nuevo caso</button>
+    <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="casos-cnt"></span>`);
+  let lista=db.casos.filter(c=>{
+    const cl=gcl(c.clienteId);
+    return(!q||(cl.nombre+c.tipo+(c.radicado||'')+(c.actoNum||'')).toLowerCase().includes(q.toLowerCase()))&&(!fE||c.estado==fE)&&(!fT||c.tipo==fT);
+  }).sort((a,b)=>new Date(a.fechaLimite)-new Date(b.fechaLimite));
+  const rows=lista.map(c=>{const cl=gcl(c.clienteId);const d=dr(c.fechaLimite);
+    return`<tr onclick="abrirCaso('${c.id}')">
+      <td style="padding:7px 12px"><div style="display:flex;align-items:center;gap:6px">
+        <i class="ti ${sico(c.estado)}" style="font-size:14px;color:var(--text3)"></i>
+        <div><div style="font-weight:500">${cl.nombre}</div><div style="font-size:11px;color:var(--text3)">${c.actoNum||c.radicado||'Sin N° acto'}</div></div>
+        <span class="row-hint">Abrir →</span>
+      </div></td>
+      <td style="padding:7px 12px"><span class="tag t-gray" style="font-size:11px">${c.tipo}</span></td>
+      <td style="padding:7px 12px;font-size:12px;color:var(--text2)">${c.actoTipo||'—'}</td>
+      <td style="padding:7px 12px;font-size:12px">${fd(c.notifFecha||c.actoFecha)}</td>
+      <td style="padding:7px 12px;font-size:12px">${c.abogado||'—'}</td>
+      <td style="padding:7px 12px">${fd(c.fechaLimite)}</td>
+      <td style="padding:7px 12px"><span class="${dcls(d)}">${d<=0?'VENCIDO':d+' d.'}</span></td>
+      <td style="padding:7px 12px"><span class="tag ${stag(c.estado)}">${c.estado}</span></td>
+    </tr>`;}).join('');
+  setTimeout(()=>{const e=document.getElementById('casos-cnt');if(e)e.textContent=lista.length+' casos';},10);
+  setC(`<div class="db-wrap"><table class="db-table">
+    <thead><tr><th>Cliente / N° Acto</th><th>Proceso</th><th>Tipo de acto</th><th>Notificación</th><th>Abogado</th><th>Límite</th><th>Días</th><th>Estado</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text3)">Sin casos registrados</td></tr>'}</tbody>
+  </table><div class="db-add" onclick="omCaso()"><i class="ti ti-plus"></i> Nuevo caso</div></div>`);
+}
+
+function abrirCaso(id){
+  const c=db.casos.find(x=>x.id==id);if(!c)return;
+  const cl=gcl(c.clienteId);const d=dr(c.fechaLimite);
+  const acts=db.actuaciones.filter(a=>a.casoId==id).sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const tl=acts.map(a=>`<div class="tl-e">
+    <div class="tl-date">${fd(a.fecha)}</div>
+    <div class="tl-tipo">${a.tipo}${a.numDoc?` · <code>${a.numDoc}</code>`:''}</div>
+    <div class="tl-desc">${a.desc}</div>
+    ${a.proxima?`<div style="font-size:12px;color:var(--text3);margin-top:2px">→ Próximo: ${a.proxima}</div>`:''}
+    <div style="font-size:11px;color:var(--text3);margin-top:2px">${a.resp||''}</div>
+  </div>`).join('');
+  setHdr('','','');setTB('');
+  setC(`<div class="pv">
+    <button class="pv-back" onclick="renderCasos()"><i class="ti ti-arrow-left"></i> Casos</button>
+    <span class="page-icon">📋</span>
+    <div class="pv-title" style="font-size:24px;font-weight:700;margin-bottom:4px">${c.tipo}</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:16px">${cl.nombre}${c.actoNum?' · N° '+c.actoNum:''}</div>
+    <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+      <button class="n-btn primary" onclick="omAct('${c.id}')"><i class="ti ti-plus"></i> Actuación</button>
+      <button class="n-btn" onclick="omCaso('${c.id}')"><i class="ti ti-edit"></i> Editar</button>
+      <button class="n-btn" style="color:var(--red)" onclick="delCaso('${c.id}')"><i class="ti ti-trash"></i> Eliminar</button>
+    </div>
+    <div class="prop-block">
+      <div class="prop-block-title"><i class="ti ti-id"></i> Identificación</div>
+      ${pr('ti-user','Cliente',cl.nombre)}${pr('ti-user-check','Abogado',c.abogado||'—')}${pr('ti-tag','Tipo',`<span class="tag t-gray">${c.tipo}</span>`)}${pr('ti-circle','Estado',`<span class="tag ${stag(c.estado)}">${c.estado}</span>`)}
+    </div>
+    <div class="prop-block">
+      <div class="prop-block-title"><i class="ti ti-file-certificate"></i> Acto administrativo</div>
+      ${pr('ti-file-text','Tipo de acto',c.actoTipo||'—')}${pr('ti-hash','N° Requerimiento / Acto',c.actoNum?`<code>${c.actoNum}</code>`:'—')}${pr('ti-calendar','Fecha del acto',fd(c.actoFecha))}${pr('ti-bell','Fecha notificación',`<b>${fd(c.notifFecha)}</b>`)}${pr('ti-user','Importador (en el acto)',c.impNombre||'—')}${pr('ti-id-badge','NIT importador',c.impNit||'—')}${pr('ti-building','División DIAN',c.division||'—')}${pr('ti-id','Radicado DIAN',c.radicado||'—')}
+    </div>
+    ${c.resNum||c.resFecha?`<div class="prop-block"><div class="prop-block-title"><i class="ti ti-file-check"></i> Resolución / Respuesta</div>${pr('ti-hash','N° Resolución',c.resNum?`<code>${c.resNum}</code>`:'—')}${pr('ti-calendar','Fecha',fd(c.resFecha))}${pr('ti-notes','Resultado',c.resDesc||'—')}</div>`:''}
+    <div class="prop-block">
+      <div class="prop-block-title"><i class="ti ti-calendar"></i> Fechas y plazos</div>
+      ${pr('ti-calendar-due','Fecha límite',`<span class="${dcls(d)}">${fd(c.fechaLimite)} — ${d<=0?'<b>VENCIDO</b>':d+' días'}</span>`)}${pr('ti-clock','Plazo legal',c.plazo||'—')}${c.proximaAct?pr('ti-arrow-right','Próxima actuación',c.proximaAct):''}
+    </div>
+    ${c.desc||c.estrategia?`<div class="prop-block"><div class="prop-block-title"><i class="ti ti-notes"></i> Hechos y estrategia</div>${c.desc?`<div style="background:var(--bg);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--text2);border-left:3px solid var(--border);margin-bottom:8px">${c.desc}</div>`:''}${c.estrategia?`<div style="background:var(--green-l);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--green);border-left:3px solid var(--green)">${c.estrategia}</div>`:''}</div>`:''}
+    <div class="divl"></div>
+    <div class="sh"><i class="ti ti-history"></i> Actuaciones (${acts.length})<button class="n-btn" style="margin-left:auto" onclick="omAct('${c.id}')"><i class="ti ti-plus"></i> Agregar</button></div>
+    <div class="tl-wrap">${tl||'<div style="color:var(--text3);font-size:13px;padding:8px 0">Sin actuaciones registradas.</div>'}</div>
+  </div>`);
+}
+
+async function delCaso(id){
+  if(!confirm('¿Eliminar este caso?'))return;
+  db.casos=db.casos.filter(c=>c.id!=id);
+  db.actuaciones=db.actuaciones.filter(a=>a.casoId!=id);
+  saveLocal();
+  await pushToSheets('casos');
+  await pushToSheets('actuaciones');
+  toast('Caso eliminado');renderCasos();
+}
+
+// ══ ACTUACIONES ══
+function renderActs(){
+  setHdr('📅','Actuaciones procesales','');
+  setTB(`<button class="n-btn primary" onclick="omAct()"><i class="ti ti-plus"></i> Registrar actuación</button><span style="margin-left:auto;font-size:12px;color:var(--text3)">${db.actuaciones.length} actuaciones</span>`);
+  const todas=[...db.actuaciones].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const rows=todas.map(a=>{const c=db.casos.find(x=>x.id==a.casoId)||{tipo:'—',clienteId:0};const cl=gcl(c.clienteId);
+    return`<tr>
+      <td style="padding:7px 12px">${fd(a.fecha)}</td>
+      <td style="padding:7px 12px"><div style="font-weight:500">${cl.nombre}</div><div style="font-size:11px;color:var(--text3)">${c.tipo}</div></td>
+      <td style="padding:7px 12px"><span class="tag t-gray" style="font-size:11px">${a.tipo}</span></td>
+      <td style="padding:7px 12px;font-size:12px">${a.numDoc?`<code>${a.numDoc}</code>`:'—'}</td>
+      <td style="padding:7px 12px;font-size:13px">${a.desc}</td>
+      <td style="padding:7px 12px;color:var(--text2)">${a.resp||'—'}</td>
+      <td style="padding:7px 12px;font-size:12px;color:var(--text3)">${a.proxima||'—'}</td>
+      <td style="padding:7px 12px;text-align:center;white-space:nowrap">
+        <button onclick="omActEdit('${a.id}')" title="Editar actuación" style="border:none;background:none;cursor:pointer;color:var(--blue);font-size:15px;padding:2px 6px;border-radius:4px" onmouseover="this.style.background='var(--blue-l)'" onmouseout="this.style.background='none'"><i class="ti ti-edit"></i></button>
+        <button onclick="delAct('${a.id}')" title="Eliminar actuación" style="border:none;background:none;cursor:pointer;color:var(--red);font-size:15px;padding:2px 6px;border-radius:4px" onmouseover="this.style.background='var(--red-l)'" onmouseout="this.style.background='none'"><i class="ti ti-trash"></i></button>
+      </td>
+    </tr>`;}).join('');
+  setC(`<div class="db-wrap"><table class="db-table">
+    <thead><tr><th>Fecha</th><th>Cliente / Caso</th><th>Tipo</th><th>N° Documento</th><th>Descripción</th><th>Responsable</th><th>Próxima</th><th style="text-align:center">Acciones</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text3)">Sin actuaciones registradas</td></tr>'}</tbody>
+  </table></div>`);
+}
+
+async function delAct(id){
+  if(!confirm('¿Eliminar esta actuación? Esta acción no se puede deshacer.'))return;
+  db.actuaciones=db.actuaciones.filter(a=>a.id!=id);
+  saveLocal();
+  await pushToSheets('actuaciones');
+  toast('Actuación eliminada');
+  renderActs();
+}
+
+// ══ ABOGADOS ══
+function renderAbogados(){
+  setHdr('⚖️','Abogados y responsables','');
+  setTB(`<button class="n-btn primary" onclick="omAbogado()"><i class="ti ti-plus"></i> Nuevo abogado</button><span style="margin-left:auto;font-size:12px;color:var(--text3)">${db.abogados.length} registrados</span>`);
+  const cards=db.abogados.map(a=>{const nc=db.casos.filter(c=>c.abogado==a.nombre&&c.estado!='Cerrado').length;
+    return`<div class="ab-card">
+      <div class="ab-avatar">${a.nombre.replace(/Dr[a]?\.\s/,'').charAt(0)}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600">${a.nombre}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">${a.cargo||'—'} · ${a.esp||'—'}</div>
+        <div style="font-size:12px;color:var(--text3)">${a.email||''}</div>
+        <div style="margin-top:6px;display:flex;gap:6px">
+          <span class="tag ${a.estado=='Activo'?'t-green':'t-gray'}">${a.estado}</span>
+          <span class="tag t-blue">${nc} casos</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button class="n-btn" onclick="omAbogado('${a.id}')"><i class="ti ti-edit"></i></button>
+        <button class="n-btn" style="color:var(--red)" onclick="delAbogado('${a.id}')"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`;}).join('');
+  setC(`<div class="ab-grid">${cards||'<div style="color:var(--text3);padding:20px">Sin abogados</div>'}</div>`);
+}
+
+async function delAbogado(id){
+  const a=db.abogados.find(x=>x.id==id);if(!a)return;
+  if(!confirm(`¿Eliminar a ${a.nombre}?`))return;
+  db.abogados=db.abogados.filter(x=>x.id!=id);
+  saveLocal();await pushToSheets('abogados');toast('Eliminado');renderAbogados();
+}
+
+// ══ ALERTAS ══
+function renderAlertas(){
+  setHdr('🔔','Alertas y vencimientos','');setTB('');
+  const act=db.casos.filter(c=>c.estado!='Cerrado');
+  const crit=act.filter(c=>dr(c.fechaLimite)<=3).sort((a,b)=>new Date(a.fechaLimite)-new Date(b.fechaLimite));
+  const warn=act.filter(c=>dr(c.fechaLimite)>3&&dr(c.fechaLimite)<=7).sort((a,b)=>new Date(a.fechaLimite)-new Date(b.fechaLimite));
+  const info=act.filter(c=>dr(c.fechaLimite)>7&&dr(c.fechaLimite)<=15).sort((a,b)=>new Date(a.fechaLimite)-new Date(b.fechaLimite));
+  const ah=(c,cls)=>{const cl=gcl(c.clienteId);const d=dr(c.fechaLimite);
+    return`<div class="al-block ${cls}" onclick="abrirCaso('${c.id}')">
+      <div style="flex:1">
+        <div style="font-size:13.5px;font-weight:600">${cl.nombre}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">${c.tipo}${c.actoNum?' · N° '+c.actoNum:''}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Abogado: ${c.abogado||'—'} · ${c.plazo||'—'}</div>
+      </div>
+    </div>`;};
+  let h='<div style="max-width:700px">';
+  if(crit.length)h+=`<div class="al-sec" style="color:var(--red)"><i class="ti ti-alert-circle"></i>Crítico — 0 a 3 días (${crit.length})</div>${crit.map(c=>ah(c,'crit')).join('')}`;
+  if(warn.length)h+=`<div class="al-sec" style="color:var(--amber)"><i class="ti ti-alert-triangle"></i>Advertencia — 4 a 7 días (${warn.length})</div>${warn.map(c=>ah(c,'warn')).join('')}`;
+  if(info.length)h+=`<div class="al-sec" style="color:var(--blue)"><i class="ti ti-info-circle"></i>Próximos — 8 a 15 días (${info.length})</div>${info.map(c=>ah(c,'info')).join('')}`;
+  if(!crit.length&&!warn.length&&!info.length)h+=`<div style="text-align:center;padding:48px 0;color:var(--text3)"><i class="ti ti-circle-check" style="font-size:40px;display:block;margin-bottom:10px;color:var(--green)"></i>Sin vencimientos en los próximos 15 días</div>`;
+  h+='</div>';setC(h);
+}
+
+// ══ KANBAN ══
+function renderKanban(){
+  setHdr('📌','Tablero','');
+  setTB(`<button class="n-btn primary" onclick="omCaso()"><i class="ti ti-plus"></i> Nuevo caso</button>`);
+  const cols=['Activo','Urgente','En revisión','Cerrado'];
+  const cico={Activo:'ti-progress',Urgente:'ti-alert-circle','En revisión':'ti-clock',Cerrado:'ti-circle-check'};
+  const cclr={Activo:'var(--blue)',Urgente:'var(--red)','En revisión':'var(--amber)',Cerrado:'var(--text3)'};
+  setC(`<div class="kb-wrap">${cols.map(col=>{
+    const items=db.casos.filter(c=>c.estado==col);
+    const cards=items.map(c=>{const cl=gcl(c.clienteId);const d=dr(c.fechaLimite);
+      return`<div class="kb-card" onclick="abrirCaso('${c.id}')">
+        <div style="font-size:13px;font-weight:500;margin-bottom:4px">${cl.nombre}</div>
+        ${c.actoNum?`<div style="font-size:11px;color:var(--text3);margin-bottom:4px">N° ${c.actoNum}</div>`:''}
+        <span class="tag t-gray" style="font-size:11px">${c.tipo}</span>
+        <div style="font-size:11px;color:var(--text3);display:flex;gap:4px;margin-top:5px">
+          <span>${fd(c.fechaLimite)}</span>
+          <span class="${dcls(d)}">${d<=0?'VENCIDO':d+' días'}</span>
+        </div>
+      </div>`;}).join('');
+    return`<div class="kb-col"><div class="kb-col-hdr"><span><i class="ti ${cico[col]}" style="color:${cclr[col]};margin-right:5px"></i>${col}</span><span class="kb-cnt">${items.length}</span></div>${cards||`<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)">Sin casos</div>`}</div>`;
+  }).join('')}</div>`);
+}
+
+// ══ REPORTES ══
+function renderReportes(){
+  setHdr('📊','Reportes','');setTB('');
+  const act=db.casos.filter(c=>c.estado!='Cerrado');
+  const byT={},byA={},byE={};
+  act.forEach(c=>{byT[c.tipo]=(byT[c.tipo]||0)+1;byA[c.abogado||'Sin asignar']=(byA[c.abogado||'Sin asignar']||0)+1;});
+  db.casos.forEach(c=>{byE[c.estado]=(byE[c.estado]||0)+1;});
+  const maxT=Math.max(...Object.values(byT),1);const maxA=Math.max(...Object.values(byA),1);
+  setC(`
+  <div class="metrics-row" style="grid-template-columns:repeat(3,1fr)">
+    <div class="mc"><div class="lbl">Casos activos</div><div class="val m-blue">${act.length}</div></div>
+    <div class="mc"><div class="lbl">Clientes</div><div class="val">${db.clientes.length}</div></div>
+    <div class="mc"><div class="lbl">Actuaciones registradas</div><div class="val">${db.actuaciones.length}</div></div>
+  </div>
+  <div class="rep-grid">
+    <div class="rep-block"><h3>Por tipo de proceso</h3>${Object.entries(byT).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`<div class="sbar"><div class="sh2"><span>${t}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxT*100)}%"></div></div></div>`).join('')||'Sin datos'}</div>
+    <div class="rep-block"><h3>Por abogado</h3>${Object.entries(byA).map(([a,n])=>`<div class="sbar"><div class="sh2"><span>${a}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxA*100)}%;background:var(--green)"></div></div></div>`).join('')||'Sin datos'}</div>
+    <div class="rep-block"><h3>Por estado</h3>${Object.entries(byE).map(([e,n])=>`<div class="sbar"><div class="sh2"><span><span class="tag ${stag(e)}" style="font-size:11px">${e}</span></span><span>${n}</span></div></div>`).join('')||'Sin datos'}</div>
+    <div class="rep-block" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center">
+      <i class="ti ti-sparkles" style="font-size:28px;color:var(--blue)"></i>
+      <div style="font-size:13px;color:var(--text2)">Generar informe ejecutivo con análisis jurídico</div>
+      <button class="n-btn primary" onclick="sendPrompt('Genera un informe ejecutivo del despacho aduanero con análisis de riesgos, vencimientos, cuantías y recomendaciones basadas en Decreto 1165/2019, Decreto 920/2023 y doctrina DIAN.')"><i class="ti ti-file-analytics"></i> Informe con IA ↗</button>
+    </div>
+  </div>`);
+}
+
+// ══ MODALES — ABRIR ══
+function omCliente(id){
+  const c=id?db.clientes.find(x=>x.id==id):null;
+  document.getElementById('mc-t').textContent=c?'Editar cliente':'Nuevo cliente';
+  ['nombre','nit','rep','tel','email','ciudad','dir','muisca'].forEach(f=>document.getElementById('c-'+f).value=c?c[f]||'':'');
+  document.getElementById('c-tipo').value=c?c.tipo:'Importador';
+  document.getElementById('c-estado').value=c?c.estado:'Activo';
+  document.getElementById('c-obs').value=c?c.obs||'':'';
+  document.getElementById('m-cliente').dataset.eid=id||'';
+  document.getElementById('m-cliente').classList.add('show');
+}
+function omCaso(id){
+  const c=id?db.casos.find(x=>x.id==id):null;
+  document.getElementById('mcs-t').textContent=c?'Editar caso':'Nuevo caso';
+  const sC=document.getElementById('caso-cliente');
+  sC.innerHTML=db.clientes.map(cl=>`<option value="${cl.id}"${c&&c.clienteId==cl.id?' selected':''}>${cl.nombre}</option>`).join('');
+  if(!sC.innerHTML){ sC.innerHTML='<option value="">— Registre primero un cliente —</option>'; }
+  const sA=document.getElementById('caso-abogado');
+  sA.innerHTML='<option value="">— Sin asignar —</option>'+db.abogados.filter(a=>a.estado=='Activo').map(a=>`<option${c&&c.abogado==a.nombre?' selected':''}>${a.nombre}</option>`).join('');
+  document.getElementById('caso-tipo').value=c?c.tipo:'Valoración aduanera';
+  document.getElementById('caso-estado').value=c?c.estado:'Activo';
+  document.getElementById('caso-acto-tipo').value=c?c.actoTipo||'':'';
+  document.getElementById('caso-acto-num').value=c?c.actoNum||'':'';
+  document.getElementById('caso-acto-fecha').value=c?c.actoFecha||'':'';
+  document.getElementById('caso-notif-fecha').value=c?c.notifFecha||'':'';
+  document.getElementById('caso-imp-nombre').value=c?c.impNombre||'':'';
+  document.getElementById('caso-imp-nit').value=c?c.impNit||'':'';
+  document.getElementById('caso-radicado').value=c?c.radicado||'':'';
+  document.getElementById('caso-division').value=c?c.division||'':'';
+  document.getElementById('caso-res-num').value=c?c.resNum||'':'';
+  document.getElementById('caso-res-fecha').value=c?c.resFecha||'':'';
+  document.getElementById('caso-res-desc').value=c?c.resDesc||'':'';
+  document.getElementById('caso-plazo').value=c?c.plazo||'':'';
+  document.getElementById('caso-proxima').value=c?c.proximaAct||'':'';
+  document.getElementById('caso-apertura').value=c?c.fechaApertura||today():today();
+  document.getElementById('caso-limite').value=c?c.fechaLimite||'':'';
+  document.getElementById('caso-desc').value=c?c.desc||'':'';
+  document.getElementById('caso-estrategia').value=c?c.estrategia||'':'';
+  document.getElementById('m-caso').dataset.eid=id||'';
+  document.getElementById('m-caso').classList.add('show');
+}
+function omAct(casoId){
+  document.getElementById('mact-t').textContent='Registrar actuación';
+  const s=document.getElementById('act-caso');
+  s.innerHTML=db.casos.map(c=>`<option value="${c.id}"${c.id==casoId?' selected':''}>${gcl(c.clienteId).nombre} · ${c.tipo}</option>`).join('');
+  const sR=document.getElementById('act-resp');
+  sR.innerHTML='<option value="">—</option>'+db.abogados.filter(a=>a.estado=='Activo').map(a=>`<option>${a.nombre}</option>`).join('');
+  document.getElementById('act-fecha').value=today();
+  ['desc','numdoc','proxima'].forEach(f=>document.getElementById('act-'+f).value='');
+  document.getElementById('act-tipo').value='Presentación de documento';
+  document.getElementById('m-act').dataset.eid='';
+  document.getElementById('m-act').classList.add('show');
+}
+
+function omActEdit(id){
+  const a=db.actuaciones.find(x=>x.id==id); if(!a) return;
+  document.getElementById('mact-t').textContent='Editar actuación';
+  const s=document.getElementById('act-caso');
+  s.innerHTML=db.casos.map(c=>`<option value="${c.id}"${c.id==a.casoId?' selected':''}>${gcl(c.clienteId).nombre} · ${c.tipo}</option>`).join('');
+  const sR=document.getElementById('act-resp');
+  sR.innerHTML='<option value="">—</option>'+db.abogados.filter(ab=>ab.estado=='Activo').map(ab=>`<option${a.resp==ab.nombre?' selected':''}>${ab.nombre}</option>`).join('');
+  document.getElementById('act-fecha').value=a.fecha||today();
+  document.getElementById('act-tipo').value=a.tipo||'Presentación de documento';
+  document.getElementById('act-desc').value=a.desc||'';
+  document.getElementById('act-numdoc').value=a.numDoc||'';
+  document.getElementById('act-proxima').value=a.proxima||'';
+  document.getElementById('m-act').dataset.eid=id;
+  document.getElementById('m-act').classList.add('show');
+}
+function omAbogado(id){
+  const a=id?db.abogados.find(x=>x.id==id):null;
+  document.getElementById('mab-t').textContent=a?'Editar abogado':'Nuevo abogado';
+  document.getElementById('ab-nombre').value=a?a.nombre||'':'';
+  document.getElementById('ab-cargo').value=a?a.cargo||'Abogado principal':'Abogado principal';
+  document.getElementById('ab-esp').value=a?a.esp||'':'';
+  document.getElementById('ab-email').value=a?a.email||'':'';
+  document.getElementById('ab-tel').value=a?a.tel||'':'';
+  document.getElementById('ab-estado').value=a?a.estado||'Activo':'Activo';
+  document.getElementById('ab-obs').value=a?a.obs||'':'';
+  document.getElementById('m-abogado').dataset.eid=id||'';
+  document.getElementById('m-abogado').classList.add('show');
+}
+
+// ══ MODALES — GUARDAR ══
+async function saveCliente(){
+  const nombre=document.getElementById('c-nombre').value.trim();
+  const nit=document.getElementById('c-nit').value.trim();
+  if(!nombre||!nit){alert('Razón social y NIT son obligatorios.');return;}
+  const eid=document.getElementById('m-cliente').dataset.eid;
+  const obj={id:eid||uid(),nombre,nit,rep:document.getElementById('c-rep').value,tel:document.getElementById('c-tel').value,email:document.getElementById('c-email').value,ciudad:document.getElementById('c-ciudad').value,dir:document.getElementById('c-dir').value,muisca:document.getElementById('c-muisca').value,tipo:document.getElementById('c-tipo').value,estado:document.getElementById('c-estado').value,obs:document.getElementById('c-obs').value};
+  if(eid){const i=db.clientes.findIndex(c=>c.id==eid);db.clientes[i]=obj;}
+  else db.clientes.push(obj);
+  saveLocal();cm('m-cliente');toast('Guardando...');
+  await pushToSheets('clientes');toast('Cliente guardado en la nube ☁');renderClientes();
+}
+async function saveCaso(){
+  const clienteId=document.getElementById('caso-cliente').value;
+  const fechaLimite=document.getElementById('caso-limite').value;
+  if(!clienteId||!fechaLimite){alert('Cliente y fecha límite son obligatorios.');return;}
+  const eid=document.getElementById('m-caso').dataset.eid;
+  const obj={
+    id:eid||uid(),clienteId,
+    tipo:document.getElementById('caso-tipo').value,
+    abogado:document.getElementById('caso-abogado').value,
+    radicado:document.getElementById('caso-radicado').value,
+    actoTipo:document.getElementById('caso-acto-tipo').value,
+    actoNum:document.getElementById('caso-acto-num').value,
+    actoFecha:document.getElementById('caso-acto-fecha').value,
+    notifFecha:document.getElementById('caso-notif-fecha').value,
+    impNombre:document.getElementById('caso-imp-nombre').value,
+    impNit:document.getElementById('caso-imp-nit').value,
+    division:document.getElementById('caso-division').value,
+    resNum:document.getElementById('caso-res-num').value,
+    resFecha:document.getElementById('caso-res-fecha').value,
+    resDesc:document.getElementById('caso-res-desc').value,
+    plazo:document.getElementById('caso-plazo').value,
+    proximaAct:document.getElementById('caso-proxima').value,
+    fechaApertura:document.getElementById('caso-apertura').value,
+    fechaLimite,
+    estado:document.getElementById('caso-estado').value,
+    desc:document.getElementById('caso-desc').value,
+    estrategia:document.getElementById('caso-estrategia').value
+  };
+  if(eid){const i=db.casos.findIndex(c=>c.id==eid);db.casos[i]=obj;}
+  else db.casos.push(obj);
+  saveLocal();cm('m-caso');toast('Guardando...');
+  await pushToSheets('casos');toast('Caso guardado en la nube ☁');renderCasos();
+}
+async function saveAct(){
+  const casoId=document.getElementById('act-caso').value;
+  const fecha=document.getElementById('act-fecha').value;
+  const desc=document.getElementById('act-desc').value.trim();
+  if(!casoId||!fecha||!desc){alert('Caso, fecha y descripción son obligatorios.');return;}
+  const eid=document.getElementById('m-act').dataset.eid;
+  const obj={
+    id:eid||uid(),casoId,fecha,
+    tipo:document.getElementById('act-tipo').value,
+    resp:document.getElementById('act-resp').value,
+    desc,
+    numDoc:document.getElementById('act-numdoc').value,
+    proxima:document.getElementById('act-proxima').value
+  };
+  if(eid){
+    const i=db.actuaciones.findIndex(a=>a.id==eid);
+    db.actuaciones[i]=obj;
+    saveLocal();cm('m-act');toast('Guardando...');
+    await pushToSheets('actuaciones');toast('Actuación actualizada en la nube ☁');
+  } else {
+    db.actuaciones.push(obj);
+    saveLocal();cm('m-act');toast('Guardando...');
+    await pushToSheets('actuaciones');toast('Actuación guardada en la nube ☁');
+  }
+  renderActs();
+}
+async function saveAbogado(){
+  const nombre=document.getElementById('ab-nombre').value.trim();
+  if(!nombre){alert('El nombre es obligatorio.');return;}
+  const eid=document.getElementById('m-abogado').dataset.eid;
+  const obj={id:eid||uid(),nombre,cargo:document.getElementById('ab-cargo').value,esp:document.getElementById('ab-esp').value,email:document.getElementById('ab-email').value,tel:document.getElementById('ab-tel').value,estado:document.getElementById('ab-estado').value,obs:document.getElementById('ab-obs').value};
+  if(eid){const i=db.abogados.findIndex(a=>a.id==eid);db.abogados[i]=obj;}
+  else db.abogados.push(obj);
+  saveLocal();cm('m-abogado');toast('Guardando...');
+  await pushToSheets('abogados');toast('Abogado guardado en la nube ☁');renderAbogados();
+}
+
+// ══ EXPORT/IMPORT LOCAL ══
+function exportDB(){const b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');const ts=new Date().toISOString().replace('T','_').substring(0,16).replace(':','-');a.href=u;a.download='sgcj_backup_'+ts+'.json';a.click();URL.revokeObjectURL(u);toast('Backup descargado');}
+function importDB(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async ev=>{try{db=JSON.parse(ev.target.result);saveLocal();for(const k of Object.keys(SHEETS))await pushToSheets(k);toast('Datos importados y sincronizados ☁');nav('dashboard');}catch{alert('Archivo inválido.');}};r.readAsText(f);e.target.value='';}
+
+function cm(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+
+// ══ INIT ══
+badge();
+initSheets().then(()=>nav('dashboard'));
+</script>
+</body>
+</html>
