@@ -726,7 +726,11 @@ function renderCasos(q='',fE='',fT=''){
     return`<tr onclick="abrirCaso('${c.id}')">
       <td style="padding:7px 12px"><div style="display:flex;align-items:center;gap:6px">
         <i class="ti ${sico(c.estado)}" style="font-size:14px;color:var(--text3)"></i>
-        <div><div style="font-weight:500">${cl.nombre}</div><div style="font-size:11px;color:var(--text3)">${c.actoNum||c.radicado||'Sin N° acto'}</div></div>
+        <div>
+          <div style="font-weight:500">${cl.nombre}</div>
+          <div style="font-size:11px;color:var(--text3)">${c.actoNum||c.radicado||'Sin N° acto'}</div>
+          ${c.impNombre?`<div style="font-size:11px;color:var(--blue)"><i class="ti ti-user" style="font-size:10px"></i> ${c.impNombre} · ${c.impNit||''}</div>`:''}
+        </div>
         <span class="row-hint">Abrir →</span>
       </div></td>
       <td style="padding:7px 12px"><span class="tag t-gray" style="font-size:11px">${c.tipo}</span></td>
@@ -739,7 +743,7 @@ function renderCasos(q='',fE='',fT=''){
     </tr>`;}).join('');
   setTimeout(()=>{const e=document.getElementById('casos-cnt');if(e)e.textContent=lista.length+' casos';},10);
   setC(`<div class="db-wrap"><table class="db-table">
-    <thead><tr><th>Cliente / N° Acto</th><th>Proceso</th><th>Tipo de acto</th><th>Notificación</th><th>Abogado</th><th>Límite</th><th>Días</th><th>Estado</th></tr></thead>
+    <thead><tr><th>Cliente / Importador / N° Acto</th><th>Proceso</th><th>Tipo de acto</th><th>Notificación</th><th>Abogado</th><th>Límite</th><th>Días</th><th>Estado</th></tr></thead>
     <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text3)">Sin casos registrados</td></tr>'}</tbody>
   </table><div class="db-add" onclick="omCaso()"><i class="ti ti-plus"></i> Nuevo caso</div></div>`);
 }
@@ -801,10 +805,14 @@ function renderActs(){
   setHdr('📅','Actuaciones procesales','');
   setTB(`<button class="n-btn primary" onclick="omAct()"><i class="ti ti-plus"></i> Registrar actuación</button><span style="margin-left:auto;font-size:12px;color:var(--text3)">${db.actuaciones.length} actuaciones</span>`);
   const todas=[...db.actuaciones].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
-  const rows=todas.map(a=>{const c=db.casos.find(x=>x.id==a.casoId)||{tipo:'—',clienteId:0};const cl=gcl(c.clienteId);
+  const rows=todas.map(a=>{const c=db.casos.find(x=>x.id==a.casoId)||{tipo:'—',clienteId:0,impNombre:'',impNit:''};const cl=gcl(c.clienteId);
     return`<tr>
       <td style="padding:7px 12px">${fd(a.fecha)}</td>
-      <td style="padding:7px 12px"><div style="font-weight:500">${cl.nombre}</div><div style="font-size:11px;color:var(--text3)">${c.tipo}</div></td>
+      <td style="padding:7px 12px">
+        <div style="font-weight:500">${cl.nombre}</div>
+        <div style="font-size:11px;color:var(--text3)">${c.tipo}</div>
+        ${c.impNombre?`<div style="font-size:11px;color:var(--blue);margin-top:2px"><i class="ti ti-user" style="font-size:10px"></i> ${c.impNombre} · NIT: ${c.impNit||'—'}</div>`:''}
+      </td>
       <td style="padding:7px 12px"><span class="tag t-gray" style="font-size:11px">${a.tipo}</span></td>
       <td style="padding:7px 12px;font-size:12px">${a.numDoc?`<code>${a.numDoc}</code>`:'—'}</td>
       <td style="padding:7px 12px;font-size:13px">${a.desc}</td>
@@ -816,7 +824,7 @@ function renderActs(){
       </td>
     </tr>`;}).join('');
   setC(`<div class="db-wrap"><table class="db-table">
-    <thead><tr><th>Fecha</th><th>Cliente / Caso</th><th>Tipo</th><th>N° Documento</th><th>Descripción</th><th>Responsable</th><th>Próxima</th><th style="text-align:center">Acciones</th></tr></thead>
+    <thead><tr><th>Fecha</th><th>Cliente / Importador</th><th>Tipo</th><th>N° Documento</th><th>Descripción</th><th>Responsable</th><th>Próxima</th><th style="text-align:center">Acciones</th></tr></thead>
     <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text3)">Sin actuaciones registradas</td></tr>'}</tbody>
   </table></div>`);
 }
@@ -909,18 +917,57 @@ function renderKanban(){
 
 // ══ REPORTES ══
 function renderReportes(){
-  setHdr('📊','Reportes','');setTB('');
+  setHdr('📊','Reportes','');
+  setTB(`
+    <button class="n-btn primary" onclick="descargarReporte('todos')"><i class="ti ti-file-type-pdf"></i> Todos los casos</button>
+    <button class="n-btn" onclick="descargarReporte('activos')" style="border:1px solid var(--border)"><i class="ti ti-file-type-pdf"></i> Casos activos</button>
+    <button class="n-btn" onclick="descargarReporte('cerrados')" style="border:1px solid var(--border)"><i class="ti ti-file-type-pdf"></i> Casos cerrados</button>
+    <button class="n-btn" onclick="descargarReporte('estado')" style="border:1px solid var(--border)"><i class="ti ti-file-type-pdf"></i> Por estado</button>
+  `);
   const act=db.casos.filter(c=>c.estado!='Cerrado');
   const byT={},byA={},byE={};
   act.forEach(c=>{byT[c.tipo]=(byT[c.tipo]||0)+1;byA[c.abogado||'Sin asignar']=(byA[c.abogado||'Sin asignar']||0)+1;});
   db.casos.forEach(c=>{byE[c.estado]=(byE[c.estado]||0)+1;});
   const maxT=Math.max(...Object.values(byT),1);const maxA=Math.max(...Object.values(byA),1);
+
+  // Tabla de clientes con sus casos e importadores
+  const tablaClientes=db.clientes.map(cl=>{
+    const casos=db.casos.filter(c=>c.clienteId==cl.id);
+    const activos=casos.filter(c=>c.estado!='Cerrado').length;
+    const cerrados=casos.filter(c=>c.estado=='Cerrado').length;
+    // Obtener importadores únicos registrados en los casos
+    const importadores=[...new Set(casos.filter(c=>c.impNombre).map(c=>c.impNombre+' · NIT: '+(c.impNit||'—')))];
+    return`<tr>
+      <td style="padding:7px 12px;font-weight:500">${cl.nombre}</td>
+      <td style="padding:7px 12px;font-size:12px;color:var(--text2)">${cl.nit}</td>
+      <td style="padding:7px 12px;font-size:12px">${importadores.length?importadores.join('<br>'):'—'}</td>
+      <td style="padding:7px 12px;text-align:center"><span class="tag t-blue">${activos}</span></td>
+      <td style="padding:7px 12px;text-align:center"><span class="tag t-gray">${cerrados}</span></td>
+      <td style="padding:7px 12px;text-align:center"><span class="tag t-blue">${casos.length}</span></td>
+    </tr>`;
+  }).join('');
+
   setC(`
-  <div class="metrics-row" style="grid-template-columns:repeat(3,1fr)">
+  <div class="metrics-row" style="grid-template-columns:repeat(4,1fr)">
     <div class="mc"><div class="lbl">Casos activos</div><div class="val m-blue">${act.length}</div></div>
+    <div class="mc"><div class="lbl">Casos cerrados</div><div class="val m-green">${db.casos.filter(c=>c.estado=='Cerrado').length}</div></div>
     <div class="mc"><div class="lbl">Clientes</div><div class="val">${db.clientes.length}</div></div>
-    <div class="mc"><div class="lbl">Actuaciones registradas</div><div class="val">${db.actuaciones.length}</div></div>
+    <div class="mc"><div class="lbl">Actuaciones</div><div class="val">${db.actuaciones.length}</div></div>
   </div>
+
+  <div class="db-wrap" style="margin-bottom:16px">
+    <div style="padding:10px 14px;font-size:12px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);background:var(--bg2)">
+      <i class="ti ti-users" style="margin-right:6px"></i>Clientes · Importadores · Casos
+    </div>
+    <table class="db-table">
+      <thead><tr>
+        <th>Cliente</th><th>NIT Cliente</th><th>Importador(es) en actos</th>
+        <th style="text-align:center">Activos</th><th style="text-align:center">Cerrados</th><th style="text-align:center">Total</th>
+      </tr></thead>
+      <tbody>${tablaClientes||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3)">Sin clientes registrados</td></tr>'}</tbody>
+    </table>
+  </div>
+
   <div class="rep-grid">
     <div class="rep-block"><h3>Por tipo de proceso</h3>${Object.entries(byT).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`<div class="sbar"><div class="sh2"><span>${t}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxT*100)}%"></div></div></div>`).join('')||'Sin datos'}</div>
     <div class="rep-block"><h3>Por abogado</h3>${Object.entries(byA).map(([a,n])=>`<div class="sbar"><div class="sh2"><span>${a}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxA*100)}%;background:var(--green)"></div></div></div>`).join('')||'Sin datos'}</div>
@@ -928,9 +975,146 @@ function renderReportes(){
     <div class="rep-block" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center">
       <i class="ti ti-sparkles" style="font-size:28px;color:var(--blue)"></i>
       <div style="font-size:13px;color:var(--text2)">Generar informe ejecutivo con análisis jurídico</div>
-      <button class="n-btn primary" onclick="sendPrompt('Genera un informe ejecutivo del despacho aduanero con análisis de riesgos, vencimientos, cuantías y recomendaciones basadas en Decreto 1165/2019, Decreto 920/2023 y doctrina DIAN.')"><i class="ti ti-file-analytics"></i> Informe con IA ↗</button>
+      <button class="n-btn primary" onclick="sendPrompt('Genera un informe ejecutivo del despacho aduanero con análisis de riesgos, vencimientos y recomendaciones basadas en Decreto 1165/2019 y Decreto 920/2023.')"><i class="ti ti-file-analytics"></i> Informe con IA ↗</button>
     </div>
   </div>`);
+}
+
+function descargarReporte(tipo){
+  let casos=[];
+  let titulo='';
+  let subtitulo='';
+  if(tipo=='todos'){casos=db.casos;titulo='Informe General de Casos';subtitulo='Todos los procesos registrados';}
+  else if(tipo=='activos'){casos=db.casos.filter(c=>c.estado!='Cerrado');titulo='Informe de Casos Activos';subtitulo='Procesos en curso y pendientes de resolución';}
+  else if(tipo=='cerrados'){casos=db.casos.filter(c=>c.estado=='Cerrado');titulo='Informe de Casos Cerrados';subtitulo='Procesos concluidos — Historial';}
+  else if(tipo=='estado'){casos=[...db.casos].sort((a,b)=>a.estado.localeCompare(b.estado));titulo='Informe por Estado Procesal';subtitulo='Clasificación según estado actual';}
+
+  const ts=new Date();
+  const fecha=ts.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const hora=ts.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+
+  const porCliente={};
+  casos.forEach(c=>{
+    const cl=gcl(c.clienteId);
+    const key=cl.nombre+'||'+(cl.nit||'');
+    if(!porCliente[key]) porCliente[key]={cliente:cl,casos:[]};
+    porCliente[key].casos.push(c);
+  });
+
+  const estadoColor={Activo:'#1a4d8f',Urgente:'#a32d2d',Cerrado:'#2d5a27','En revisión':'#7a5a00'};
+  const estadoBg={Activo:'#dce8f5',Urgente:'#f7dada',Cerrado:'#d8edd6','En revisión':'#f5edcc'};
+
+  let casoRows='';
+  let numCaso=1;
+  Object.values(porCliente).forEach(({cliente,casos:cc})=>{
+    casoRows+=`<tr style="background:#f0ede6"><td colspan="7" style="padding:8px 12px;font-family:Georgia,serif;font-weight:700;font-size:12px;color:#1a1a2e;border-top:2px solid #c8b98a;border-bottom:1px solid #c8b98a">
+      <span style="font-size:13px">${cliente.nombre||'—'}</span>
+      <span style="font-weight:400;font-style:italic;font-size:11px;color:#666;margin-left:8px">NIT: ${cliente.nit||'—'}</span>
+      <span style="float:right;font-size:11px;font-weight:400;color:#888">${cc.length} caso(s)</span>
+    </td></tr>`;
+    cc.forEach(c=>{
+      const d=dr(c.fechaLimite);
+      const diasStr=d<=0?'VENCIDO':d+' días';
+      const diasColor=d<=0?'#a32d2d':d<=3?'#a32d2d':d<=7?'#7a5a00':'#2d5a27';
+      const ec=estadoColor[c.estado]||'#444';
+      const eb=estadoBg[c.estado]||'#eee';
+      casoRows+=`<tr style="border-bottom:1px solid #e8e6e0">
+        <td style="padding:7px 12px;font-size:11px;color:#666;text-align:center">${numCaso++}</td>
+        <td style="padding:7px 12px">
+          <div style="font-size:12px;font-weight:600;color:#1a1a2e">${c.actoNum||'Sin N° acto'}</div>
+          ${c.impNombre?`<div style="font-size:10px;color:#4a6fa5;margin-top:2px">Imp: ${c.impNombre} · NIT: ${c.impNit||'—'}</div>`:''}
+          <div style="font-size:10px;color:#aaa;margin-top:1px">${c.radicado||''}</div>
+        </td>
+        <td style="padding:7px 12px">
+          <div style="font-size:11px;font-weight:600;color:#37352f">${c.tipo}</div>
+          <div style="font-size:10px;color:#888;margin-top:1px">${c.actoTipo||'—'}</div>
+        </td>
+        <td style="padding:7px 12px">
+          <div style="font-size:11px;color:#37352f">${c.abogado||'—'}</div>
+          <div style="font-size:10px;color:#888">${c.plazo||''}</div>
+        </td>
+        <td style="padding:7px 12px;font-size:11px;text-align:center;color:#37352f">${c.notifFecha?fd(c.notifFecha):'—'}</td>
+        <td style="padding:7px 12px;text-align:center">
+          <div style="font-size:11px;font-weight:600;color:${diasColor}">${diasStr}</div>
+          <div style="font-size:10px;color:#888">${c.fechaLimite?fd(c.fechaLimite):''}</div>
+        </td>
+        <td style="padding:7px 12px;text-align:center">
+          <span style="background:${eb};color:${ec};padding:3px 8px;border-radius:3px;font-size:10px;font-weight:700;font-family:Georgia,serif">${c.estado}</span>
+        </td>
+      </tr>`;
+      if(c.desc){
+        casoRows+=`<tr style="border-bottom:1px solid #e8e6e0;background:#faf9f7"><td></td>
+        <td colspan="6" style="padding:5px 12px 8px;font-size:10px;color:#666;font-style:italic;line-height:1.5">${c.desc.substring(0,200)}${c.desc.length>200?'...':''}</td></tr>`;
+      }
+    });
+  });
+
+  const activos=casos.filter(c=>c.estado!='Cerrado').length;
+  const cerrados_n=casos.filter(c=>c.estado=='Cerrado').length;
+  const urgentes=casos.filter(c=>c.estado=='Urgente'||dr(c.fechaLimite)<=3).length;
+
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+titulo+' — CONSULTINGCOL S.A.S.</title>'
+  +'<style>*{box-sizing:border-box;margin:0;padding:0}'
+  +'body{font-family:"Segoe UI",Arial,sans-serif;font-size:12px;color:#37352f;background:#fff}'
+  +'@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}'
+  +'.page{max-width:900px;margin:0 auto}'
+  +'.header{background:#1a1a2e;color:#fff;padding:28px 36px 22px}'
+  +'.header-top{display:flex;align-items:flex-start;justify-content:space-between}'
+  +'.firm-name{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#fff}'
+  +'.firm-name span{font-weight:400;font-style:italic;color:#c8b98a}'
+  +'.firm-sub{font-family:Georgia,serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#c8b98a;margin-top:4px}'
+  +'.firm-contact{text-align:right;font-size:10px;color:#9b9a97;line-height:1.8}'
+  +'.gold-line{height:2px;background:linear-gradient(to right,#c8b98a,#e8d5a3,#c8b98a);margin-top:16px}'
+  +'.report-title-block{padding:20px 36px 16px;border-bottom:1px solid #e8e6e0}'
+  +'.report-title{font-family:Georgia,serif;font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:4px}'
+  +'.report-sub{font-size:11px;color:#888;font-style:italic}'
+  +'.report-meta{font-size:10px;color:#aaa;margin-top:6px}'
+  +'.metrics{display:flex;border-bottom:2px solid #1a1a2e;margin:16px 36px 20px}'
+  +'.metric{flex:1;padding:14px 16px;border-right:1px solid #e8e6e0;text-align:center}'
+  +'.metric:last-child{border-right:none}'
+  +'.metric .val{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#1a1a2e}'
+  +'.metric .lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-top:3px}'
+  +'.section{padding:0 36px 20px}'
+  +'.section-title{font-family:Georgia,serif;font-size:12px;font-weight:700;color:#1a1a2e;letter-spacing:1px;text-transform:uppercase;padding:10px 0 8px;border-bottom:2px solid #c8b98a;margin-bottom:0}'
+  +'table{width:100%;border-collapse:collapse}'
+  +'thead th{background:#1a1a2e;color:#c8b98a;padding:8px 12px;font-family:Georgia,serif;font-size:10px;font-weight:600;letter-spacing:.5px;text-align:left;text-transform:uppercase}'
+  +'.footer{padding:16px 36px;border-top:2px solid #1a1a2e;display:flex;justify-content:space-between;align-items:center;margin-top:20px}'
+  +'.footer-firm{font-family:Georgia,serif;font-size:10px;color:#888}'
+  +'.footer-page{font-family:Georgia,serif;font-size:10px;color:#c8b98a;font-style:italic}'
+  +'.confidential{text-align:center;font-size:9px;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;padding:8px 36px 16px;font-family:Georgia,serif;font-style:italic}'
+  +'</style></head><body><div class="page">'
+  +'<div class="header"><div class="header-top">'
+  +'<div><div class="firm-name">CONSULTINGCOL <span>S. A. S.</span></div>'
+  +'<div class="firm-sub">C · C · S &nbsp;·&nbsp; Gestión de Procesos Aduaneros</div></div>'
+  +'<div class="firm-contact">Colombia · Derecho Aduanero<br>consultingcolsas@gmail.com<br>Decreto 1165/2019 · Decreto 920/2023</div>'
+  +'</div><div class="gold-line"></div></div>'
+  +'<div class="report-title-block">'
+  +'<div class="report-title">'+titulo+'</div>'
+  +'<div class="report-sub">'+subtitulo+'</div>'
+  +'<div class="report-meta">Generado el '+fecha+' a las '+hora+' &nbsp;·&nbsp; Total: '+casos.length+' caso(s) &nbsp;·&nbsp; Clientes: '+Object.keys(porCliente).length+'</div>'
+  +'</div>'
+  +'<div style="padding:16px 36px 0"><div class="metrics">'
+  +'<div class="metric"><div class="val" style="color:#1a4d8f">'+activos+'</div><div class="lbl">Activos</div></div>'
+  +'<div class="metric"><div class="val" style="color:#a32d2d">'+urgentes+'</div><div class="lbl">Críticos</div></div>'
+  +'<div class="metric"><div class="val" style="color:#2d5a27">'+cerrados_n+'</div><div class="lbl">Cerrados</div></div>'
+  +'<div class="metric"><div class="val">'+db.clientes.length+'</div><div class="lbl">Clientes</div></div>'
+  +'<div class="metric"><div class="val">'+db.actuaciones.length+'</div><div class="lbl">Actuaciones</div></div>'
+  +'</div></div>'
+  +'<div class="section"><div class="section-title">Detalle por cliente y proceso</div>'
+  +'<table><thead><tr>'
+  +'<th style="width:30px">#</th><th>N° Acto / Importador</th><th>Tipo de proceso</th>'
+  +'<th>Abogado / Plazo</th><th style="text-align:center">Notificación</th>'
+  +'<th style="text-align:center">Vencimiento</th><th style="text-align:center">Estado</th>'
+  +'</tr></thead><tbody>'+casoRows+'</tbody></table></div>'
+  +'<div class="footer">'
+  +'<div class="footer-firm">CONSULTINGCOL S.A.S. &nbsp;·&nbsp; Sistema de Gestión de Casos Jurídicos</div>'
+  +'<div class="footer-page">Documento generado: '+fecha+'</div></div>'
+  +'<div class="confidential">— Documento confidencial · Uso exclusivo interno · CONSULTINGCOL S.A.S. —</div>'
+  +'</div><script>window.onload=function(){window.print();}<\/script></body></html>';
+
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();}
+  toast('PDF generado — en el diálogo de impresión selecciona "Guardar como PDF"');
 }
 
 // ══ MODALES — ABRIR ══
