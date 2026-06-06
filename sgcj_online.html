@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SGCJ · Derecho Aduanero</title>
+<title>SGCJ · CONSULTINGCOL S.A.S. v2</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
@@ -235,7 +235,7 @@ code{background:var(--bg2);padding:2px 6px;border-radius:3px;font-size:12px;font
     <div class="fgrp"><label>Cliente <span class="req">*</span></label><select id="caso-cliente"></select></div>
     <div class="fgrp"><label>Abogado responsable</label><select id="caso-abogado"></select></div>
     <div class="fgrp"><label>Tipo de proceso <span class="req">*</span></label>
-      <select id="caso-tipo"><option>Valoración aduanera</option><option>Clasificación arancelaria</option><option>Régimen sancionatorio</option><option>Recurso de reconsideración</option><option>Recurso de apelación</option><option>Importación ordinaria</option><option>Exportación</option><option>OEA - Habilitación</option><option>Requerimiento ordinario</option><option>Levante condicionado</option><option>Aprehensión de mercancía</option><option>Decomiso</option><option>Otro</option></select>
+      <select id="caso-tipo"><option>Valoración aduanera</option><option>Clasificación arancelaria</option><option>Régimen sancionatorio</option><option>Recurso de reconsideración</option><option>Resolución de Recurso de Reconsideración</option><option>Recurso de apelación</option><option>Importación ordinaria</option><option>Exportación</option><option>OEA - Habilitación</option><option>Requerimiento ordinario</option><option>Levante condicionado</option><option>Aprehensión de mercancía</option><option>Acta de Hecho</option><option>Objeciones a la aprehensión</option><option>Decomiso</option><option>Otro</option></select>
     </div>
     <div class="fgrp"><label>Estado</label>
       <select id="caso-estado"><option>Activo</option><option>Urgente</option><option>En revisión</option><option>Cerrado</option></select>
@@ -247,24 +247,89 @@ code{background:var(--bg2);padding:2px 6px;border-radius:3px;font-size:12px;font
     <div class="fgrp"><label>Número del acto / Requerimiento</label><input id="caso-acto-num" placeholder="322016-005-2025-00123"></div>
     <div class="fgrp"><label>Fecha del acto</label><input type="date" id="caso-acto-fecha"></div>
     <div class="fgrp"><label>Fecha de notificación <span class="req">*</span></label><input type="date" id="caso-notif-fecha"></div>
-    <div class="fgrp"><label>Nombre del importador (en el acto)</label><input id="caso-imp-nombre" placeholder="Razón social tal como aparece en el acto"></div>
-    <div class="fgrp"><label>NIT del importador (en el acto)</label><input id="caso-imp-nit" placeholder="900.123.456-7"></div>
-    <div class="fgrp"><label>Radicado DIAN</label><input id="caso-radicado" placeholder="2025-DI-00000"></div>
-    <div class="fgrp"><label>División / Seccional DIAN</label><input id="caso-division"></div>
-    <div class="fs-lbl">Resolución de respuesta</div>
-    <div class="fgrp"><label>Número de resolución</label><input id="caso-res-num"></div>
-    <div class="fgrp"><label>Fecha de resolución</label><input type="date" id="caso-res-fecha"></div>
-    <div class="fgrp ff"><label>Resultado</label><input id="caso-res-desc"></div>
+    <div class="fgrp"><label>Nombre del Interesado</label><input id="caso-imp-nombre" placeholder="Razón social tal como aparece en el acto"></div>
+    <div class="fgrp"><label>NIT del Interesado</label><input id="caso-imp-nit" placeholder="900.123.456-7"></div>
+    <div class="fgrp"><label>Expediente o Insumo DIAN</label><input id="caso-radicado" placeholder="2025-DI-00000"></div>
+    <div class="fgrp"><label>Dirección Seccional de Aduanas</label>
+      <select id="caso-division">
+        <option value="">— Seleccionar —</option>
+        <optgroup label="Direcciones Seccionales de Aduanas (DSA)">
+          <option>DSA de Bogotá</option>
+          <option>DSA de Cartagena</option>
+          <option>DSA de Barranquilla</option>
+          <option>DSA de Buenaventura</option>
+          <option>DSA de Cali</option>
+          <option>DSA de Armenia</option>
+          <option>DSA de Medellín</option>
+          <option>DSA de Cúcuta</option>
+          <option>DSA de Bucaramanga</option>
+          <option>DSA de Santa Marta</option>
+          <option>DSA de Ipiales</option>
+          <option>DSA de Pereira</option>
+          <option>DSA de Manizales</option>
+          <option>DSA de Montería</option>
+          <option>DSA de Riohacha</option>
+        </optgroup>
+        <optgroup label="Direcciones Seccionales de Aduanas e Impuestos (DSAI)">
+          <option>DSAI de Bogotá</option>
+          <option>DSAI de Barranquilla</option>
+          <option>DSAI de Cartagena</option>
+          <option>DSAI de Cali</option>
+          <option>DSAI de Armenia</option>
+          <option>DSAI de Buenaventura</option>
+          <option>DSAI de Medellín</option>
+          <option>DSAI de Cúcuta</option>
+          <option>DSAI de Bucaramanga</option>
+          <option>DSAI de Pereira</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="fgrp"><label>División competente</label>
+      <select id="caso-subdivision">
+        <option value="">— Seleccionar —</option>
+        <option>División de Fiscalización Aduanera</option>
+        <option>División de la Operación Aduanera</option>
+        <option>División Jurídica Aduanera</option>
+        <option>División Jurídica Tributaria</option>
+        <option>División de Gestión de Liquidación</option>
+        <option>División de Gestión de Recaudo</option>
+        <option>División de Gestión de Cobro</option>
+        <option>Grupo de Trabajo de Aprehensiones</option>
+      </select>
+    </div>
+
     <div class="fs-lbl">Fechas y plazos</div>
     <div class="fgrp"><label>Fecha apertura</label><input type="date" id="caso-apertura"></div>
-    <div class="fgrp"><label>Fecha límite <span class="req">*</span></label><input type="date" id="caso-limite"></div>
-    <div class="fgrp"><label>Plazo legal</label>
-      <select id="caso-plazo"><option value="">— Seleccionar —</option><option>10 días hábiles (Art. 589)</option><option>15 días hábiles (Art. 734)</option><option>30 días hábiles (Apelación)</option><option>5 días hábiles (Art. 275)</option><option>2 meses (Consulta clasificación)</option><option>Otro plazo</option></select>
+    <div class="fgrp"><label>Plazo de respuesta</label>
+      <select id="caso-plazo" onchange="calcularFechaLimite()">
+        <option value="">— Seleccionar plazo —</option>
+        <option value="5">5 días hábiles (Art. 275 - Levante condicionado)</option>
+        <option value="10">10 días hábiles (Art. 589 - Requerimiento ordinario)</option>
+        <option value="15">15 días hábiles (Art. 734 - Recurso reconsideración)</option>
+        <option value="30">30 días hábiles (Recurso de apelación)</option>
+        <option value="60">2 meses (Consulta clasificación)</option>
+      </select>
+    </div>
+    <div class="fgrp"><label>Fecha límite <span class="req">*</span> <span style="font-size:10px;color:var(--blue)">(se calcula automáticamente al seleccionar plazo)</span></label>
+      <input type="date" id="caso-limite">
     </div>
     <div class="fgrp"><label>Próxima actuación</label><input id="caso-proxima"></div>
     <div class="fs-lbl">Hechos y estrategia</div>
     <div class="fgrp ff"><label>Descripción / Hechos</label><textarea id="caso-desc"></textarea></div>
-    <div class="fgrp ff"><label>Estrategia jurídica</label><textarea id="caso-estrategia"></textarea></div>
+    <div class="fgrp ff"><label>Estrategia jurídica</label>
+      <select id="caso-estrategia-tipo" onchange="actualizarEstrategia(this.value)" style="margin-bottom:6px">
+        <option value="">— Seleccionar estrategia —</option>
+        <option value="Demandar el acto administrativo">Demandar el acto administrativo</option>
+        <option value="Presentar Recurso de Reconsideración">Presentar Recurso de Reconsideración</option>
+        <option value="Presentar Objeción al Acta de Aprehensión">Presentar Objeción al Acta de Aprehensión</option>
+        <option value="Objeción al Informe de Insolvencia">Objeción al Informe de Insolvencia</option>
+        <option value="Correo electrónico con Modelo de respuesta al ROI">Correo electrónico con Modelo de respuesta al ROI</option>
+        <option value="Allanamiento a los cargos">Allanamiento a los cargos</option>
+        <option value="Solicitud de levante de mercancía">Solicitud de levante de mercancía</option>
+        <option value="Otra estrategia">Otra estrategia</option>
+      </select>
+      <textarea id="caso-estrategia" placeholder="Descripción detallada de la estrategia, argumentos jurídicos, jurisprudencia aplicable..."></textarea>
+    </div>
   </div></div>
   <div class="modal-footer">
     <button class="n-btn" onclick="cm('m-caso')">Cancelar</button>
@@ -328,7 +393,7 @@ let APPS_SCRIPT_URL = localStorage.getItem('sgcj_apps_script_url') || 'https://s
 // ══ CABECERAS DE CADA HOJA ══
 const HEADERS = {
   clientes:    ['id','nombre','nit','rep','tel','email','ciudad','dir','muisca','tipo','estado','obs'],
-  casos:       ['id','clienteId','tipo','abogado','radicado','actoTipo','actoNum','actoFecha','notifFecha','impNombre','impNit','division','resNum','resFecha','resDesc','plazo','proximaAct','fechaApertura','fechaLimite','estado','desc','estrategia'],
+  casos:       ['id','clienteId','tipo','abogado','radicado','actoTipo','actoNum','actoFecha','notifFecha','impNombre','impNit','division','subdivision','plazo','proximaAct','fechaApertura','fechaLimite','estado','desc','estrategiaTipo','estrategia'],
   actuaciones: ['id','casoId','fecha','tipo','resp','desc','numDoc','proxima'],
   abogados:    ['id','nombre','cargo','esp','email','tel','estado','obs']
 };
@@ -606,6 +671,48 @@ function setHdr(icon,title,desc=''){document.getElementById('page-hdr').innerHTM
 function setTB(h){document.getElementById('topbar').innerHTML=h;}
 function setC(h){document.getElementById('content').innerHTML=h;}
 function toggleSB(){const s=document.getElementById('sidebar');const b=document.getElementById('sb-float');s.classList.toggle('collapsed');b.style.display=s.classList.contains('collapsed')?'block':'none';}
+function calcularFechaLimite(){
+  const plazo=document.getElementById('caso-plazo').value;
+  const notif=document.getElementById('caso-notif-fecha').value||document.getElementById('caso-apertura').value;
+  if(!plazo||!notif) return;
+  const dias=parseInt(plazo);
+  const base=new Date(notif);
+  // Festivos Colombia 2025-2026 aproximados
+  const festivos=['2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25'];
+  if(plazo==='60'){
+    // 2 meses calendario
+    const lim=new Date(base);
+    lim.setMonth(lim.getMonth()+2);
+    document.getElementById('caso-limite').value=lim.toISOString().split('T')[0];
+  } else {
+    // Días hábiles — saltar sábados, domingos y festivos
+    let count=0;
+    const cur=new Date(base);
+    cur.setDate(cur.getDate()+1);
+    while(count<dias){
+      const dow=cur.getDay();
+      const ds=cur.toISOString().split('T')[0];
+      if(dow!==0&&dow!==6&&!festivos.includes(ds)) count++;
+      if(count<dias) cur.setDate(cur.getDate()+1);
+    }
+    document.getElementById('caso-limite').value=cur.toISOString().split('T')[0];
+  }
+}
+
+function actualizarEstrategia(val){
+  const ta=document.getElementById('caso-estrategia');
+  const plantillas={
+    'Demandar el acto administrativo':'Acción de nulidad y restablecimiento del derecho ante el Tribunal Administrativo. Fundamentos: violación al debido proceso, falsa motivación del acto. Normas: Art. 137 CPACA, Art. 83 Decreto 1165/2019.',
+    'Presentar Recurso de Reconsideración':'Recurso de reconsideración en los términos del Art. 734 del Decreto 1165 de 2019. Plazo: 15 días hábiles desde notificación. Argumentos: incorrecta aplicación de la norma, pruebas no valoradas.',
+    'Presentar Objeción al Acta de Aprehensión':'Objeción formal al Acta de Aprehensión conforme al Art. 649 y ss. del Decreto 1165 de 2019. Acreditar legalidad de la mercancía y origen lícito.',
+    'Objeción al Informe de Insolvencia':'Objeción técnica al informe de insolvencia. Acreditar capacidad financiera del interesado y cumplimiento de obligaciones aduaneras.',
+    'Correo electrónico con Modelo de respuesta al ROI':'Comunicación formal de respuesta al Requerimiento Ordinario de Información (ROI). Aportar documentos soporte: factura comercial, BL, declaración de importación, certificado de origen.',
+    'Allanamiento a los cargos':'Allanamiento expreso a los cargos formulados con solicitud de reducción de sanción en un 50% conforme al Art. 24 numeral 1 del Decreto 920 de 2023. Diligenciar Formulario 690.',
+    'Solicitud de levante de mercancía':'Solicitud de levante bajo garantía conforme al Art. 275 del Decreto 1165 de 2019. Constituir garantía equivalente al valor de los tributos aduaneros.'
+  };
+  if(val&&plantillas[val]&&!ta.value) ta.value=plantillas[val];
+}
+
 function badge(){const n=db.casos.filter(c=>c.estado!='Cerrado'&&dr(c.fechaLimite)<=7).length;const b=document.getElementById('sb-badge');if(b){b.textContent=n;b.className='sb-badge'+(n>0?'':' ok');}}
 function pr(icon,label,val){return`<div class="pr"><div class="pr-lbl"><i class="ti ${icon}"></i>${label}</div><div class="pr-val">${val}</div></div>`;}
 
@@ -776,14 +883,14 @@ function abrirCaso(id){
     </div>
     <div class="prop-block">
       <div class="prop-block-title"><i class="ti ti-file-certificate"></i> Acto administrativo</div>
-      ${pr('ti-file-text','Tipo de acto',c.actoTipo||'—')}${pr('ti-hash','N° Requerimiento / Acto',c.actoNum?`<code>${c.actoNum}</code>`:'—')}${pr('ti-calendar','Fecha del acto',fd(c.actoFecha))}${pr('ti-bell','Fecha notificación',`<b>${fd(c.notifFecha)}</b>`)}${pr('ti-user','Importador (en el acto)',c.impNombre||'—')}${pr('ti-id-badge','NIT importador',c.impNit||'—')}${pr('ti-building','División DIAN',c.division||'—')}${pr('ti-id','Radicado DIAN',c.radicado||'—')}
+      ${pr('ti-file-text','Tipo de acto',c.actoTipo||'—')}${pr('ti-hash','N° Requerimiento / Acto',c.actoNum?`<code>${c.actoNum}</code>`:'—')}${pr('ti-calendar','Fecha del acto',fd(c.actoFecha))}${pr('ti-bell','Fecha notificación',`<b>${fd(c.notifFecha)}</b>`)}${pr('ti-user','Nombre del Interesado',c.impNombre||'—')}${pr('ti-id-badge','NIT del Interesado',c.impNit||'—')}${pr('ti-building','Dirección Seccional',c.division||'—')}${pr('ti-sitemap','División competente',c.subdivision||'—')}${pr('ti-id','Expediente o Insumo DIAN',c.radicado||'—')}
     </div>
-    ${c.resNum||c.resFecha?`<div class="prop-block"><div class="prop-block-title"><i class="ti ti-file-check"></i> Resolución / Respuesta</div>${pr('ti-hash','N° Resolución',c.resNum?`<code>${c.resNum}</code>`:'—')}${pr('ti-calendar','Fecha',fd(c.resFecha))}${pr('ti-notes','Resultado',c.resDesc||'—')}</div>`:''}
+
     <div class="prop-block">
       <div class="prop-block-title"><i class="ti ti-calendar"></i> Fechas y plazos</div>
       ${pr('ti-calendar-due','Fecha límite',`<span class="${dcls(d)}">${fd(c.fechaLimite)} — ${d<=0?'<b>VENCIDO</b>':d+' días'}</span>`)}${pr('ti-clock','Plazo legal',c.plazo||'—')}${c.proximaAct?pr('ti-arrow-right','Próxima actuación',c.proximaAct):''}
     </div>
-    ${c.desc||c.estrategia?`<div class="prop-block"><div class="prop-block-title"><i class="ti ti-notes"></i> Hechos y estrategia</div>${c.desc?`<div style="background:var(--bg);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--text2);border-left:3px solid var(--border);margin-bottom:8px">${c.desc}</div>`:''}${c.estrategia?`<div style="background:var(--green-l);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--green);border-left:3px solid var(--green)">${c.estrategia}</div>`:''}</div>`:''}
+    ${c.desc||c.estrategia||c.estrategiaTipo?`<div class="prop-block"><div class="prop-block-title"><i class="ti ti-notes"></i> Hechos y estrategia</div>${c.desc?`<div style="background:var(--bg);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--text2);border-left:3px solid var(--border);margin-bottom:8px">${c.desc}</div>`:''}${c.estrategiaTipo?`<div style="background:var(--blue-l);border-radius:var(--r);padding:6px 12px;font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px"><i class="ti ti-chess-knight" style="margin-right:5px"></i>${c.estrategiaTipo}</div>`:''}${c.estrategia?`<div style="background:var(--green-l);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;color:var(--green);border-left:3px solid var(--green)">${c.estrategia}</div>`:''}</div>`:''}
     <div class="divl"></div>
     <div class="sh"><i class="ti ti-history"></i> Actuaciones (${acts.length})<button class="n-btn" style="margin-left:auto" onclick="omAct('${c.id}')"><i class="ti ti-plus"></i> Agregar</button></div>
     <div class="tl-wrap">${tl||'<div style="color:var(--text3);font-size:13px;padding:8px 0">Sin actuaciones registradas.</div>'}</div>
@@ -972,6 +1079,7 @@ function renderReportes(){
     <div class="rep-block"><h3>Por tipo de proceso</h3>${Object.entries(byT).sort((a,b)=>b[1]-a[1]).map(([t,n])=>`<div class="sbar"><div class="sh2"><span>${t}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxT*100)}%"></div></div></div>`).join('')||'Sin datos'}</div>
     <div class="rep-block"><h3>Por abogado</h3>${Object.entries(byA).map(([a,n])=>`<div class="sbar"><div class="sh2"><span>${a}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxA*100)}%;background:var(--green)"></div></div></div>`).join('')||'Sin datos'}</div>
     <div class="rep-block"><h3>Por estado</h3>${Object.entries(byE).map(([e,n])=>`<div class="sbar"><div class="sh2"><span><span class="tag ${stag(e)}" style="font-size:11px">${e}</span></span><span>${n}</span></div></div>`).join('')||'Sin datos'}</div>
+    <div class="rep-block" style="grid-column:1/-1"><h3>Por estrategia jurídica</h3>${(()=>{const byS={};act.forEach(c=>{if(c.estrategiaTipo){byS[c.estrategiaTipo]=(byS[c.estrategiaTipo]||0)+1;}});const maxS=Math.max(...Object.values(byS),1);return Object.entries(byS).sort((a,b)=>b[1]-a[1]).map(([s,n])=>`<div class="sbar"><div class="sh2"><span style="font-size:12px">${s}</span><span>${n}</span></div><div class="bar"><div class="bar-fill" style="width:${Math.round(n/maxS*100)}%;background:#9065b0"></div></div></div>`).join('')||'Sin estrategias registradas';})()}</div>
     <div class="rep-block" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center">
       <i class="ti ti-sparkles" style="font-size:28px;color:var(--blue)"></i>
       <div style="font-size:13px;color:var(--text2)">Generar informe ejecutivo con análisis jurídico</div>
@@ -1022,7 +1130,7 @@ function descargarReporte(tipo){
         <td style="padding:7px 12px;font-size:11px;color:#666;text-align:center">${numCaso++}</td>
         <td style="padding:7px 12px">
           <div style="font-size:12px;font-weight:600;color:#1a1a2e">${c.actoNum||'Sin N° acto'}</div>
-          ${c.impNombre?`<div style="font-size:10px;color:#4a6fa5;margin-top:2px">Imp: ${c.impNombre} · NIT: ${c.impNit||'—'}</div>`:''}
+          ${c.impNombre?`<div style="font-size:10px;color:#4a6fa5;margin-top:2px">Interesado: ${c.impNombre} · NIT: ${c.impNit||'—'}</div>`:''}
           <div style="font-size:10px;color:#aaa;margin-top:1px">${c.radicado||''}</div>
         </td>
         <td style="padding:7px 12px">
@@ -1146,14 +1254,13 @@ function omCaso(id){
   document.getElementById('caso-imp-nit').value=c?c.impNit||'':'';
   document.getElementById('caso-radicado').value=c?c.radicado||'':'';
   document.getElementById('caso-division').value=c?c.division||'':'';
-  document.getElementById('caso-res-num').value=c?c.resNum||'':'';
-  document.getElementById('caso-res-fecha').value=c?c.resFecha||'':'';
-  document.getElementById('caso-res-desc').value=c?c.resDesc||'':'';
+  document.getElementById('caso-subdivision').value=c?c.subdivision||'':'';
   document.getElementById('caso-plazo').value=c?c.plazo||'':'';
   document.getElementById('caso-proxima').value=c?c.proximaAct||'':'';
   document.getElementById('caso-apertura').value=c?c.fechaApertura||today():today();
   document.getElementById('caso-limite').value=c?c.fechaLimite||'':'';
   document.getElementById('caso-desc').value=c?c.desc||'':'';
+  document.getElementById('caso-estrategia-tipo').value=c?c.estrategiaTipo||'':'';
   document.getElementById('caso-estrategia').value=c?c.estrategia||'':'';
   document.getElementById('m-caso').dataset.eid=id||'';
   document.getElementById('m-caso').classList.add('show');
@@ -1229,15 +1336,14 @@ async function saveCaso(){
     impNombre:document.getElementById('caso-imp-nombre').value,
     impNit:document.getElementById('caso-imp-nit').value,
     division:document.getElementById('caso-division').value,
-    resNum:document.getElementById('caso-res-num').value,
-    resFecha:document.getElementById('caso-res-fecha').value,
-    resDesc:document.getElementById('caso-res-desc').value,
+    subdivision:document.getElementById('caso-subdivision').value,
     plazo:document.getElementById('caso-plazo').value,
     proximaAct:document.getElementById('caso-proxima').value,
     fechaApertura:document.getElementById('caso-apertura').value,
     fechaLimite,
     estado:document.getElementById('caso-estado').value,
     desc:document.getElementById('caso-desc').value,
+    estrategiaTipo:document.getElementById('caso-estrategia-tipo').value,
     estrategia:document.getElementById('caso-estrategia').value
   };
   if(eid){const i=db.casos.findIndex(c=>c.id==eid);db.casos[i]=obj;}
