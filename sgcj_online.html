@@ -381,6 +381,49 @@ code{background:var(--bg2);padding:2px 6px;border-radius:3px;font-size:12px;font
 
 <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
 
+<!-- MODAL SELECTOR ESTRATEGIA -->
+<div class="overlay" id="m-estrategia">
+<div class="modal sm">
+  <div class="modal-hdr">
+    <h2><i class="ti ti-chess-knight" style="color:#9065b0"></i> Informe por Estrategia Jurídica</h2>
+    <button class="n-btn" onclick="cm('m-estrategia')"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="modal-body">
+    <div class="fg">
+      <div class="fgrp ff">
+        <label>Selecciona la estrategia jurídica <span class="req">*</span></label>
+        <select id="sel-estrategia" style="font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--rm);background:#fff;color:var(--text);font-family:var(--font);width:100%">
+          <option value="">— Seleccionar estrategia —</option>
+          <option>Demandar el acto administrativo</option>
+          <option>Presentar Recurso de Reconsideración</option>
+          <option>Presentar Objeción al Acta de Aprehensión</option>
+          <option>Objeción al Informe de Insolvencia</option>
+          <option>Correo electrónico con Modelo de respuesta al ROI</option>
+          <option>Allanamiento a los cargos</option>
+          <option>Solicitud de levante de mercancía</option>
+          <option>Otra estrategia</option>
+        </select>
+      </div>
+      <div class="fgrp ff" style="margin-top:8px">
+        <label>Filtrar por estado (opcional)</label>
+        <select id="sel-estado-est" style="font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--rm);background:#fff;color:var(--text);font-family:var(--font);width:100%">
+          <option value="">Todos los estados</option>
+          <option>Activo</option>
+          <option>Urgente</option>
+          <option>En revisión</option>
+          <option>Cerrado</option>
+        </select>
+      </div>
+      <div id="preview-estrategia" style="margin-top:12px;padding:10px 12px;background:var(--bg2);border-radius:var(--rm);font-size:12px;color:var(--text3);min-height:40px"></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="n-btn" onclick="cm('m-estrategia')">Cancelar</button>
+    <button class="n-btn primary" onclick="generarInformeEstrategia()"><i class="ti ti-file-type-pdf"></i> Generar informe PDF</button>
+  </div>
+</div>
+</div>
+
 <script>
 // ══ CONFIGURACIÓN GOOGLE SHEETS ══
 // ══ CONFIGURACIÓN ══
@@ -1030,6 +1073,7 @@ function renderReportes(){
     <button class="n-btn" onclick="descargarReporte('activos')" style="border:1px solid var(--border)"><i class="ti ti-file-type-pdf"></i> Casos activos</button>
     <button class="n-btn" onclick="descargarReporte('cerrados')" style="border:1px solid var(--border)"><i class="ti ti-file-type-pdf"></i> Casos cerrados</button>
     <button class="n-btn" onclick="descargarReporte('estado')" style="border:1px solid var(--border)"><i class="ti ti-file-type-pdf"></i> Por estado</button>
+    <button class="n-btn" onclick="abrirSelectorEstrategia()" style="border:1px solid #9065b0;color:#9065b0"><i class="ti ti-chess-knight"></i> Por estrategia jurídica</button>
   `);
   const act=db.casos.filter(c=>c.estado!='Cerrado');
   const byT={},byA={},byE={};
@@ -1389,6 +1433,162 @@ async function saveAbogado(){
 }
 
 // ══ EXPORT/IMPORT LOCAL ══
+function abrirSelectorEstrategia(){
+  document.getElementById('sel-estrategia').value='';
+  document.getElementById('sel-estado-est').value='';
+  document.getElementById('preview-estrategia').innerHTML='Selecciona una estrategia para ver cuántos casos aplican.';
+  document.getElementById('sel-estrategia').onchange=function(){
+    const est=this.value;
+    const fEst=document.getElementById('sel-estado-est').value;
+    if(!est){document.getElementById('preview-estrategia').innerHTML='Selecciona una estrategia para ver cuántos casos aplican.';return;}
+    const casos=db.casos.filter(c=>c.estrategiaTipo==est&&(!fEst||c.estado==fEst));
+    const clientes=[...new Set(casos.map(c=>gcl(c.clienteId).nombre))];
+    document.getElementById('preview-estrategia').innerHTML=
+      casos.length>0
+      ?`<b style="color:#9065b0">${casos.length} caso(s)</b> con esta estrategia · <b>${clientes.length}</b> cliente(s): ${clientes.join(', ')}`
+      :'<span style="color:var(--red)">Sin casos con esta estrategia.</span>';
+  };
+  document.getElementById('sel-estado-est').onchange=document.getElementById('sel-estrategia').onchange;
+  document.getElementById('m-estrategia').classList.add('show');
+}
+
+function generarInformeEstrategia(){
+  const estrategia=document.getElementById('sel-estrategia').value;
+  const fEst=document.getElementById('sel-estado-est').value;
+  if(!estrategia){alert('Debes seleccionar una estrategia jurídica.');return;}
+
+  const casos=db.casos.filter(c=>c.estrategiaTipo==estrategia&&(!fEst||c.estado==fEst));
+  if(casos.length===0){alert('No hay casos con esta estrategia.');return;}
+
+  const ts=new Date();
+  const fecha=ts.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const hora=ts.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+
+  // Agrupar por cliente
+  const porCliente={};
+  casos.forEach(c=>{
+    const cl=gcl(c.clienteId);
+    const key=cl.nombre+'||'+(cl.nit||'');
+    if(!porCliente[key]) porCliente[key]={cliente:cl,casos:[]};
+    porCliente[key].casos.push(c);
+  });
+
+  let bloques='';
+  Object.values(porCliente).forEach(({cliente,casos:cc})=>{
+    bloques+=`
+    <div style="margin-bottom:28px;break-inside:avoid">
+      <!-- CLIENTE HEADER -->
+      <div style="background:#1a1a2e;color:#fff;padding:10px 16px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:Georgia,serif;font-size:14px;font-weight:700">${cliente.nombre||'—'}</div>
+          <div style="font-size:10px;color:#c8b98a;margin-top:2px">NIT: ${cliente.nit||'—'} · ${cliente.tipo||'Importador'} · ${cliente.ciudad||'—'}</div>
+        </div>
+        <div style="text-align:right;font-size:10px;color:#9b9a97">${cc.length} caso(s)</div>
+      </div>
+      ${cc.map(c=>{
+        const d=dr(c.fechaLimite);
+        const diasColor=d<=0?'#a32d2d':d<=3?'#a32d2d':d<=7?'#7a5a00':'#2d5a27';
+        const acts=db.actuaciones.filter(a=>a.casoId==c.id).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
+        return `
+        <div style="border:1px solid #e8e6e0;border-top:none;padding:14px 16px;background:#fff">
+          <!-- CASO INFO -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+            <div style="flex:1">
+              <div style="font-family:Georgia,serif;font-size:13px;font-weight:700;color:#1a1a2e">${c.tipo}</div>
+              <div style="font-size:11px;color:#666;margin-top:2px">
+                ${c.actoTipo?c.actoTipo+' · ':''}${c.actoNum?'N° '+c.actoNum:'Sin N° acto'}
+                ${c.radicado?' · Expediente: '+c.radicado:''}
+              </div>
+              ${c.impNombre?`<div style="font-size:11px;color:#4a6fa5;margin-top:2px">Interesado: ${c.impNombre} · NIT: ${c.impNit||'—'}</div>`:''}
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:12px">
+              <div style="font-size:11px;font-weight:700;color:${diasColor}">${d<=0?'VENCIDO':d+' días'}</div>
+              <div style="font-size:10px;color:#888">${c.fechaLimite?fd(c.fechaLimite):''}</div>
+              <span style="background:#f4eefb;color:#9065b0;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:700;font-family:Georgia,serif;display:inline-block;margin-top:4px">${c.estado}</span>
+            </div>
+          </div>
+          <!-- DATOS DEL ACTO -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:#f7f6f3;border-radius:4px;padding:8px 10px;margin-bottom:10px;font-size:10px">
+            <div><span style="color:#999;text-transform:uppercase;letter-spacing:.5px">Notificación</span><br><b>${c.notifFecha?fd(c.notifFecha):'—'}</b></div>
+            <div><span style="color:#999;text-transform:uppercase;letter-spacing:.5px">Dirección Seccional</span><br><b>${c.division||'—'}</b></div>
+            <div><span style="color:#999;text-transform:uppercase;letter-spacing:.5px">División</span><br><b>${c.subdivision||'—'}</b></div>
+            <div><span style="color:#999;text-transform:uppercase;letter-spacing:.5px">Abogado</span><br><b>${c.abogado||'—'}</b></div>
+            <div><span style="color:#999;text-transform:uppercase;letter-spacing:.5px">Plazo</span><br><b>${c.plazo||'—'}</b></div>
+            <div><span style="color:#999;text-transform:uppercase;letter-spacing:.5px">Fecha límite</span><br><b style="color:${diasColor}">${c.fechaLimite?fd(c.fechaLimite):'—'}</b></div>
+          </div>
+          <!-- ESTRATEGIA -->
+          <div style="background:#f4eefb;border-left:3px solid #9065b0;border-radius:3px;padding:8px 12px;margin-bottom:10px">
+            <div style="font-size:10px;font-weight:700;color:#9065b0;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Estrategia jurídica</div>
+            <div style="font-size:12px;font-weight:600;color:#37352f">${c.estrategiaTipo||'—'}</div>
+            ${c.estrategia?`<div style="font-size:11px;color:#555;margin-top:4px;line-height:1.6">${c.estrategia}</div>`:''}
+          </div>
+          ${c.desc?`<div style="border-left:3px solid #e8e6e0;padding:6px 12px;margin-bottom:10px;font-size:11px;color:#666;line-height:1.6;font-style:italic">${c.desc.substring(0,300)}${c.desc.length>300?'...':''}</div>`:''}
+          <!-- ACTUACIONES -->
+          ${acts.length>0?`
+          <div>
+            <div style="font-family:Georgia,serif;font-size:10px;font-weight:700;color:#1a1a2e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #e8e6e0">Historial de actuaciones (${acts.length})</div>
+            ${acts.map(a=>`
+            <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid #f0ede6">
+              <div style="width:75px;flex-shrink:0;font-size:10px;color:#888">${fd(a.fecha)}</div>
+              <div style="flex:1">
+                <div style="font-size:11px;font-weight:600;color:#1a1a2e">${a.tipo}</div>
+                <div style="font-size:11px;color:#555;margin-top:1px">${a.desc}</div>
+                ${a.numDoc?`<div style="font-size:10px;color:#4a6fa5;margin-top:1px">Doc: ${a.numDoc}</div>`:''}
+                ${a.proxima?`<div style="font-size:10px;color:#888;margin-top:1px">→ Próximo: ${a.proxima}</div>`:''}
+              </div>
+              <div style="width:80px;flex-shrink:0;font-size:10px;color:#999;text-align:right">${a.resp||''}</div>
+            </div>`).join('')}
+          </div>`:'<div style="font-size:11px;color:#aaa;font-style:italic">Sin actuaciones registradas.</div>'}
+        </div>`;
+      }).join('')}
+    </div>`;
+  });
+
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">'
+  +'<title>Informe por Estrategia — '+estrategia+'</title>'
+  +'<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Segoe UI",Arial,sans-serif;font-size:12px;color:#37352f;background:#fff}'
+  +'@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none}}'
+  +'</style></head><body>'
+  +'<div style="max-width:900px;margin:0 auto">'
+  // MEMBRETE
+  +'<div style="background:#1a1a2e;color:#fff;padding:24px 36px 18px">'
+  +'<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+  +'<div><div style="font-family:Georgia,serif;font-size:20px;font-weight:700">CONSULTINGCOL <span style="font-weight:400;font-style:italic;color:#c8b98a">S. A. S.</span></div>'
+  +'<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#c8b98a;margin-top:3px">Gestión de Procesos Aduaneros · Colombia</div></div>'
+  +'<div style="text-align:right;font-size:10px;color:#9b9a97;line-height:1.8">Derecho Aduanero · Comercio Exterior<br>consultingcolsas@gmail.com</div></div>'
+  +'<div style="height:2px;background:linear-gradient(to right,#c8b98a,#e8d5a3,#c8b98a);margin-top:14px"></div></div>'
+  // TÍTULO
+  +'<div style="padding:18px 36px 14px;border-bottom:1px solid #e8e6e0">'
+  +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">'
+  +'<div style="background:#9065b0;width:4px;height:24px;border-radius:2px"></div>'
+  +'<div style="font-family:Georgia,serif;font-size:16px;font-weight:700;color:#1a1a2e">Informe por Estrategia Jurídica</div></div>'
+  +'<div style="font-family:Georgia,serif;font-size:13px;font-weight:600;color:#9065b0;margin-left:14px">'+ estrategia+'</div>'
+  +(fEst?'<div style="font-size:11px;color:#888;margin-left:14px;margin-top:2px">Filtro por estado: '+fEst+'</div>':'')
+  +'<div style="font-size:10px;color:#aaa;margin-left:14px;margin-top:4px">Generado el '+fecha+' a las '+hora+' · '+casos.length+' caso(s) · '+Object.keys(porCliente).length+' cliente(s)</div></div>'
+  // MÉTRICAS
+  +'<div style="display:flex;border-bottom:2px solid #1a1a2e;margin:0 36px 20px">'
+  +'<div style="flex:1;padding:12px 14px;border-right:1px solid #e8e6e0;text-align:center"><div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#9065b0">'+casos.length+'</div><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-top:2px">Casos</div></div>'
+  +'<div style="flex:1;padding:12px 14px;border-right:1px solid #e8e6e0;text-align:center"><div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#1a4d8f">'+Object.keys(porCliente).length+'</div><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-top:2px">Clientes</div></div>'
+  +'<div style="flex:1;padding:12px 14px;border-right:1px solid #e8e6e0;text-align:center"><div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#a32d2d">'+casos.filter(c=>c.estado=='Urgente'||dr(c.fechaLimite)<=3).length+'</div><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-top:2px">Críticos</div></div>'
+  +'<div style="flex:1;padding:12px 14px;text-align:center"><div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:#2d5a27">'+casos.filter(c=>c.estado=='Cerrado').length+'</div><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-top:2px">Cerrados</div></div>'
+  +'</div>'
+  // CASOS
+  +'<div style="padding:0 36px 20px">'+bloques+'</div>'
+  // PIE
+  +'<div style="padding:14px 36px;border-top:2px solid #1a1a2e;display:flex;justify-content:space-between">'
+  +'<div style="font-family:Georgia,serif;font-size:10px;color:#888">CONSULTINGCOL S.A.S. · Sistema de Gestión de Casos Jurídicos</div>'
+  +'<div style="font-family:Georgia,serif;font-size:10px;color:#c8b98a;font-style:italic">'+fecha+'</div></div>'
+  +'<div style="text-align:center;font-size:9px;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;padding:8px 36px 16px;font-family:Georgia,serif;font-style:italic">— Documento confidencial · Uso exclusivo interno · CONSULTINGCOL S.A.S. —</div>'
+  +'</div>'
+  +'<script>window.onload=function(){window.print();}<\/script>'
+  +'</body></html>';
+
+  cm('m-estrategia');
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();}
+  toast('Informe por estrategia generado');
+}
+
 function exportDB(){const b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');const ts=new Date().toISOString().replace('T','_').substring(0,16).replace(':','-');a.href=u;a.download='sgcj_backup_'+ts+'.json';a.click();URL.revokeObjectURL(u);toast('Backup descargado');}
 function importDB(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async ev=>{try{db=JSON.parse(ev.target.result);saveLocal();for(const k of Object.keys(SHEETS))await pushToSheets(k);toast('Datos importados y sincronizados ☁');nav('dashboard');}catch{alert('Archivo inválido.');}};r.readAsText(f);e.target.value='';}
 
