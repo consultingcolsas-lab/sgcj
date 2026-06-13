@@ -1082,22 +1082,6 @@ function renderReportes(){
   const maxT=Math.max(...Object.values(byT),1);const maxA=Math.max(...Object.values(byA),1);
 
   // Tabla de clientes con sus casos e importadores
-  const tablaClientes=db.clientes.map(cl=>{
-    const casos=db.casos.filter(c=>c.clienteId==cl.id);
-    const activos=casos.filter(c=>c.estado!='Cerrado').length;
-    const cerrados=casos.filter(c=>c.estado=='Cerrado').length;
-    // Obtener importadores únicos registrados en los casos
-    const importadores=[...new Set(casos.filter(c=>c.impNombre).map(c=>c.impNombre+' · NIT: '+(c.impNit||'—')))];
-    return`<tr>
-      <td style="padding:7px 12px;font-weight:500">${cl.nombre}</td>
-      <td style="padding:7px 12px;font-size:12px;color:var(--text2)">${cl.nit}</td>
-      <td style="padding:7px 12px;font-size:12px">${importadores.length?importadores.join('<br>'):'—'}</td>
-      <td style="padding:7px 12px;text-align:center"><span class="tag t-blue">${activos}</span></td>
-      <td style="padding:7px 12px;text-align:center"><span class="tag t-gray">${cerrados}</span></td>
-      <td style="padding:7px 12px;text-align:center"><span class="tag t-blue">${casos.length}</span></td>
-    </tr>`;
-  }).join('');
-
   setC(`
   <div class="metrics-row" style="grid-template-columns:repeat(4,1fr)">
     <div class="mc"><div class="lbl">Casos activos</div><div class="val m-blue">${act.length}</div></div>
@@ -1107,15 +1091,23 @@ function renderReportes(){
   </div>
 
   <div class="db-wrap" style="margin-bottom:16px">
-    <div style="padding:10px 14px;font-size:12px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);background:var(--bg2)">
-      <i class="ti ti-users" style="margin-right:6px"></i>Clientes · Importadores · Casos
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="font-size:12px;font-weight:600;color:var(--text2)"><i class="ti ti-users" style="margin-right:6px"></i>Clientes · Importadores · Casos</div>
+      <select id="filtro-clientes-rep" onchange="filtrarTablaClientes(this.value)" style="font-size:12px;padding:4px 10px;border:1px solid var(--border);border-radius:var(--rm);background:var(--bg);color:var(--text);height:28px;cursor:pointer">
+        <option value="todos">Todos los casos</option>
+        <option value="activos">Solo casos activos</option>
+        <option value="cerrados">Solo casos cerrados</option>
+        <option value="urgentes">Solo casos urgentes</option>
+        <option value="revision">Solo en revisión</option>
+      </select>
+      <span id="rep-cliente-count" style="font-size:11px;color:var(--text3);margin-left:auto"></span>
     </div>
-    <table class="db-table">
+    <table class="db-table" id="tabla-clientes-rep">
       <thead><tr>
-        <th>Cliente</th><th>NIT Cliente</th><th>Importador(es) en actos</th>
+        <th>Cliente</th><th>NIT Cliente</th><th>Interesado(s) en actos</th>
         <th style="text-align:center">Activos</th><th style="text-align:center">Cerrados</th><th style="text-align:center">Total</th>
       </tr></thead>
-      <tbody>${tablaClientes||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3)">Sin clientes registrados</td></tr>'}</tbody>
+      <tbody id="tbody-clientes-rep"></tbody>
     </table>
   </div>
 
@@ -1130,6 +1122,8 @@ function renderReportes(){
       <button class="n-btn primary" onclick="sendPrompt('Genera un informe ejecutivo del despacho aduanero con análisis de riesgos, vencimientos y recomendaciones basadas en Decreto 1165/2019 y Decreto 920/2023.')"><i class="ti ti-file-analytics"></i> Informe con IA ↗</button>
     </div>
   </div>`);
+  // Inicializar tabla de clientes con todos los casos
+  setTimeout(()=>filtrarTablaClientes('todos'),50);
 }
 
 function descargarReporte(tipo){
@@ -1587,6 +1581,61 @@ function generarInformeEstrategia(){
   const w=window.open('','_blank');
   if(w){w.document.write(html);w.document.close();}
   toast('Informe por estrategia generado');
+}
+
+function filtrarTablaClientes(filtro){
+  const tbody=document.getElementById('tbody-clientes-rep');
+  const countEl=document.getElementById('rep-cliente-count');
+  if(!tbody) return;
+  let totalCasos=0;
+  const rows=db.clientes.map(cl=>{
+    let casos=db.casos.filter(c=>c.clienteId==cl.id);
+    if(filtro==='activos') casos=casos.filter(c=>c.estado!='Cerrado');
+    else if(filtro==='cerrados') casos=casos.filter(c=>c.estado=='Cerrado');
+    else if(filtro==='urgentes') casos=casos.filter(c=>c.estado=='Urgente'||dr(c.fechaLimite)<=3);
+    else if(filtro==='revision') casos=casos.filter(c=>c.estado=='En revisión');
+    if(casos.length===0) return '';
+    totalCasos+=casos.length;
+    const activos=casos.filter(c=>c.estado!='Cerrado').length;
+    const cerrados=casos.filter(c=>c.estado=='Cerrado').length;
+    const interesados=[...new Set(casos.filter(c=>c.impNombre).map(c=>c.impNombre+' · NIT: '+(c.impNit||'—')))];
+    // Expandir filas de casos al hacer clic
+    const casoRows=casos.map(c=>{
+      const d=dr(c.fechaLimite);
+      return `<tr style="background:#faf9f7;display:none" class="caso-detalle-${cl.id}">
+        <td colspan="2" style="padding:5px 12px 5px 24px;font-size:11px;color:var(--text2)">
+          <i class="ti ti-chevron-right" style="font-size:10px;margin-right:4px;color:var(--text3)"></i>
+          ${c.actoNum||'Sin N° acto'} · ${c.tipo}
+          ${c.impNombre?` · <span style="color:var(--blue)">${c.impNombre}</span>`:''}
+        </td>
+        <td style="padding:5px 12px;font-size:11px;color:var(--text3)">${c.actoTipo||'—'}</td>
+        <td style="padding:5px 12px;text-align:center"><span class="tag ${stag(c.estado)}" style="font-size:10px">${c.estado}</span></td>
+        <td style="padding:5px 12px;text-align:center;font-size:11px;font-weight:600" class="${dcls(d)}">${d<=0?'VENCIDO':d+' d.'}</td>
+        <td style="padding:5px 12px;font-size:11px;text-align:center;color:var(--text3)">${fd(c.fechaLimite)}</td>
+      </tr>`;
+    }).join('');
+    return `<tr style="cursor:pointer" onclick="toggleDetalleCl('${cl.id}',this)">
+      <td style="padding:7px 12px;font-weight:500">
+        <i class="ti ti-chevron-right" id="ico-${cl.id}" style="font-size:12px;color:var(--text3);transition:.2s;margin-right:4px"></i>
+        ${cl.nombre}
+      </td>
+      <td style="padding:7px 12px;font-size:12px;color:var(--text2)">${cl.nit||'—'}</td>
+      <td style="padding:7px 12px;font-size:12px">${interesados.length?interesados.join('<br>'):'—'}</td>
+      <td style="padding:7px 12px;text-align:center"><span class="tag t-blue">${activos}</span></td>
+      <td style="padding:7px 12px;text-align:center"><span class="tag t-gray">${cerrados}</span></td>
+      <td style="padding:7px 12px;text-align:center;font-weight:600">${casos.length}</td>
+    </tr>${casoRows}`;
+  }).join('');
+  tbody.innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text3)">Sin registros para este filtro</td></tr>';
+  if(countEl) countEl.textContent=totalCasos+' caso(s) mostrado(s)';
+}
+
+function toggleDetalleCl(id, row){
+  const filas=document.querySelectorAll('.caso-detalle-'+id);
+  const ico=document.getElementById('ico-'+id);
+  const visible=filas[0]&&filas[0].style.display!='none';
+  filas.forEach(f=>f.style.display=visible?'none':'table-row');
+  if(ico) ico.style.transform=visible?'':'rotate(90deg)';
 }
 
 function exportDB(){const b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');const ts=new Date().toISOString().replace('T','_').substring(0,16).replace(':','-');a.href=u;a.download='sgcj_backup_'+ts+'.json';a.click();URL.revokeObjectURL(u);toast('Backup descargado');}
