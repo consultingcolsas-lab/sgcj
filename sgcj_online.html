@@ -453,29 +453,67 @@ async function sheetsGet(range){
 // ══ ESCRIBIR via Apps Script Web App ══
 async function sheetsWrite(action, payload){
   if(!APPS_SCRIPT_URL) throw new Error('NO_SCRIPT');
+  const json = JSON.stringify(payload);
+  // Si el payload es pequeño usamos GET, si es grande usamos POST
+  if(json.length < 1500){
+    // GET — datos pequeños
+    return new Promise((resolve)=>{
+      const encoded = encodeURIComponent(json);
+      const url = APPS_SCRIPT_URL + '?data=' + encoded;
+      const iframe = document.createElement('iframe');
+      iframe.style.display='none';
+      iframe.src = url;
+      iframe.onload = ()=>{ setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} resolve({ok:true}); },1500); };
+      iframe.onerror = ()=>{ try{document.body.removeChild(iframe);}catch(e){} resolve({ok:true}); };
+      document.body.appendChild(iframe);
+      setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} resolve({ok:true}); },5000);
+    });
+  } else {
+    // POST — datos grandes (muchos casos/registros) — desde GitHub Pages no hay bloqueo CORS
+    try{
+      const r = await fetch(APPS_SCRIPT_URL, {
+        method:'POST',
+        mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: json
+      });
+      // no-cors no retorna respuesta legible pero el script se ejecuta
+      await new Promise(r=>setTimeout(r,2500));
+      return {ok:true};
+    }catch(e){
+      // Fallback: dividir en chunks por filas y enviar de a 10
+      return await sheetsWriteChunks(payload);
+    }
+  }
+}
+
+async function sheetsWriteChunks(payload){
+  // Enviar cabeceras primero
+  const headerPayload={sheet:payload.sheet,headers:payload.headers,rows:[]};
+  await sheetsWriteSingle(headerPayload);
+  // Luego enviar filas en grupos de 10
+  const rows=payload.rows||[];
+  const chunkSize=10;
+  for(let i=0;i<rows.length;i+=chunkSize){
+    const chunk=rows.slice(i,i+chunkSize);
+    const appendPayload={sheet:payload.sheet,headers:null,rows:chunk,append:true};
+    await sheetsWriteSingle(appendPayload);
+    await new Promise(r=>setTimeout(r,300));
+  }
+  return {ok:true};
+}
+
+async function sheetsWriteSingle(payload){
   return new Promise((resolve)=>{
     const encoded = encodeURIComponent(JSON.stringify(payload));
     const url = APPS_SCRIPT_URL + '?data=' + encoded;
-    // Usar iframe oculto para evitar bloqueo CORS
     const iframe = document.createElement('iframe');
     iframe.style.display='none';
     iframe.src = url;
-    iframe.onload = ()=>{
-      setTimeout(()=>{
-        document.body.removeChild(iframe);
-        resolve({ok:true});
-      },1500);
-    };
-    iframe.onerror = ()=>{
-      document.body.removeChild(iframe);
-      resolve({ok:true}); // igual intentar
-    };
+    iframe.onload = ()=>{ setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} resolve({ok:true}); },800); };
+    iframe.onerror = ()=>{ try{document.body.removeChild(iframe);}catch(e){} resolve({ok:true}); };
     document.body.appendChild(iframe);
-    // Timeout de seguridad
-    setTimeout(()=>{
-      try{document.body.removeChild(iframe);}catch(e){}
-      resolve({ok:true});
-    },5000);
+    setTimeout(()=>{ try{document.body.removeChild(iframe);}catch(e){} resolve({ok:true}); },3000);
   });
 }
 
